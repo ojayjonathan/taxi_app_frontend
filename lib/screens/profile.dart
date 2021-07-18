@@ -25,6 +25,7 @@ class MapScreenState extends State<ProfilePage>
   GlobalKey<FormState> profileForm = GlobalKey<FormState>();
   void validateForm() {
     if (profileForm.currentState.validate()) {
+      //TODO:submit form
       setState(() {
         _status = true;
         FocusScope.of(context).requestFocus(FocusNode());
@@ -106,48 +107,53 @@ class MapScreenState extends State<ProfilePage>
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(15),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _tabIndex = 0;
-                                  });
-                                },
-                                child: Text(
-                                  "Status",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: _tabIndex == 0
-                                          ? Palette.accentColor
-                                          : Palette.dark[2],
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _tabIndex = 0;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  bottom: 5, // Space between underline and text
                                 ),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                  color: _tabIndex == 0
+                                      ? Palette.accentColor
+                                      : Colors.transparent,
+                                  width: 2.0, // Underline thickness
+                                ))),
+                                child: _labelText("Status")
                               ),
                             ),
-                            Expanded(
-                              child: InkWell(
-                                child: Text(
-                                  "Profile",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
+                            InkWell(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                    bottom:
+                                        5, // Space between underline and text
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
                                       color: _tabIndex == 1
                                           ? Palette.accentColor
-                                          : Palette.dark[2],
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    _tabIndex = 1;
-                                  });
-                                },
-                              ),
+                                          : Colors.transparent,
+                                      width: 2.0,
+                                    )),
+                                  ),
+                                  child: _labelText("Profile")),
+                              onTap: () {
+                                setState(() {
+                                  _tabIndex = 1;
+                                });
+                              },
                             )
                           ],
                         ),
@@ -205,20 +211,8 @@ class MapScreenState extends State<ProfilePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      'First Name',
-                      style: TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Last Name',
-                      style: TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  Expanded(child: _labelText("First Name")),
+                  Expanded(child: _labelText("Last Name")),
                 ],
               ),
             ),
@@ -257,13 +251,7 @@ class MapScreenState extends State<ProfilePage>
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Email ',
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                      children: <Widget>[_labelText('Email ')],
                     ),
                   ],
                 )),
@@ -294,13 +282,7 @@ class MapScreenState extends State<ProfilePage>
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Mobile',
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                      children: <Widget>[_labelText("Mobile")],
                     ),
                   ],
                 )),
@@ -327,23 +309,11 @@ class MapScreenState extends State<ProfilePage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Expanded(
-                      child: Container(
-                        child: Text(
-                          'Pin Code',
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      child: Container(child: _labelText('Pin Code')),
                       flex: 2,
                     ),
                     Expanded(
-                      child: Container(
-                        child: Text(
-                          'State',
-                          style: TextStyle(
-                              fontSize: 15.0, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      child: Container(child: _labelText("Street")),
                       flex: 2,
                     ),
                   ],
@@ -382,14 +352,43 @@ class MapScreenState extends State<ProfilePage>
     );
   }
 
+  Widget _labelText(String label) {
+    return Text(
+      label,
+      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+    );
+  }
+
   Widget _menu() {
+    //TODO: add account navigation list
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Container(child: Text("item 1")),
-        Text("item 1"),
-        Text("item 2"),
+        _menuItem("Help", Icons.info),
+        _menuItem("Bookings", Icons.info),
+        _menuItem("Feedback", Icons.info)
       ],
+    );
+  }
+
+  Widget _menuItem(String label, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(icon),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: _labelText(label),
+              )
+            ],
+          ),
+          Icon(Icons.arrow_forward_ios)
+        ],
+      ),
     );
   }
 

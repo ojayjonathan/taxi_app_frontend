@@ -53,6 +53,7 @@ Widget backButton(BuildContext context) {
 Widget actionButton(BuildContext context, String label, Function onPressed) {
   return TextButton(
       onPressed: onPressed,
+      style: ElevatedButton.styleFrom(primary: Palette.accentColor),
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 15),
           alignment: Alignment.center,
@@ -82,6 +83,7 @@ Widget outLineBtn() {
 Widget cancelButton(BuildContext context, String label, Function onPressed) {
   return TextButton(
       onPressed: onPressed,
+      style: ElevatedButton.styleFrom(primary: Color(0xffACAFC7)),
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 15),
           alignment: Alignment.center,

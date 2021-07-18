@@ -80,6 +80,7 @@ class Booking extends StatelessWidget {
             Icon(Icons.phone, size: 30, color: Palette.dark[2]),
           ],
           onTap: (index) {
+            //TODO: implement routing
             print(index);
           }),
       body: Container(

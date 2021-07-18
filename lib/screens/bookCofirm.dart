@@ -61,19 +61,39 @@ class _BookConfirmState extends State<BookConfirm> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("From:  \t Nakuru",
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Palette.dark[2])),
+                    Row(children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text("From:",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Palette.dark[2])),
+                      ),
+                      Text("Kisii",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Palette.dark[2])),
+                    ]),
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
-                    Text("To: ${"\t" * 7} Kisii",
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Palette.dark[2])),
+                    Row(children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text("To:",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Palette.dark[2])),
+                      ),
+                      Text("Nakuru",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Palette.dark[2])),
+                    ]),
                     Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: Text(
@@ -149,7 +169,7 @@ class _BookConfirmState extends State<BookConfirm> {
                   ]),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: Palette.lighBlueColor),
+                  color: Palette.backgroundColor),
             ),
           ],
         ),

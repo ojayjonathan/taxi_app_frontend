@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/screens/auth/resetPassword.dart';
+import 'package:taxi_app/screens/driver/TripDetail.dart';
+import 'package:taxi_app/screens/driver/Trips.dart';
+import 'package:taxi_app/screens/profile.dart';
+import 'package:taxi_app/screens/userActions/feedback.dart';
+import 'package:taxi_app/screens/userActions/userBookHistory.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,10 +38,6 @@ class MyApp extends StatelessWidget {
           // closer together (more dense) than on mobile platforms.
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: ResetPasswordPage(title: "Reset Password",),
-        
-        
-        );
-      
+        home: ProfilePage());
   }
 }
