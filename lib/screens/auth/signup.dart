@@ -48,44 +48,49 @@ class _SignUpPageState extends State<SignUpPage> {
         height: height,
         child: Stack(
           children: <Widget>[
-            Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: BezierContainer(),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Form(
-                        key: formKey,
-                        child: Column(
-                          children: <Widget>[
-                            entryField("Email",
-                                validator: MultiValidator([
-                                  RequiredValidator(errorText: "Required"),
-                                  EmailValidator(
-                                      errorText: "Please provide a valid email")
-                                ])),
-                            phoneEntryField("Phone number",
-                                validator: phoneValidator),
-                            entryField("Password",
-                                validator: passwordValidator, isPassword: true)
-                          ],
-                        )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    submitButton(context, validateForm, "Register"),
-                  ],
+            Positioned(top: 0, right: 0, child: BezierContainer()),
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _title(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Form(
+                          key: formKey,
+                          child: Column(
+                            children: <Widget>[
+                              entryField("Email",
+                                  icon: Icons.email,
+                                  hintText: "john@gmail.com",
+                                  validator: MultiValidator([
+                                    RequiredValidator(errorText: "Required"),
+                                    EmailValidator(
+                                        errorText:
+                                            "Please provide a valid email")
+                                  ])),
+                              phoneEntryField(
+                                "Phone number",
+                                validator: phoneValidator,
+                              ),
+                              entryField("Password",
+                                  validator: passwordValidator,
+                                  isPassword: true,
+                                  icon: Icons.lock,
+                                  hintText: "password")
+                            ],
+                          )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      submitButton(context, validateForm, "Register"),
+                    ],
+                  ),
                 ),
               ),
             ),

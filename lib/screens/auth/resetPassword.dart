@@ -54,7 +54,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           children: <Widget>[
             Positioned(
               top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
+              right: 0,
               child: BezierContainer(),
             ),
             Container(

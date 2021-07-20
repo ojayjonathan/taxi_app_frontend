@@ -34,8 +34,7 @@ class _LoginPageState extends State<LoginPage> {
             context, MaterialPageRoute(builder: (context) => SignUpPage()));
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20),
-        padding: EdgeInsets.all(15),
+        margin: EdgeInsets.symmetric(vertical: 10),
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -86,44 +85,49 @@ class _LoginPageState extends State<LoginPage> {
       child: Stack(
         children: <Widget>[
           Positioned(
-              top: -height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
+              top: 0,
+              right: 0,
               child: Hero(tag: "page_paint", child: BezierContainer())),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: height * .2),
-                _title(),
-                SizedBox(height: 20),
-                Form(
-                  key: formkey,
-                  child: Column(
-                    children: <Widget>[
-                      entryField("Email",
-                          validator: MultiValidator([
-                            RequiredValidator(errorText: 'Required'),
-                            EmailValidator(
-                                errorText: 'Enter a valid email address')
-                          ])),
-                      entryField("Password",
-                          validator: passwordValidator, isPassword: true),
-                    ],
+          Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _title(),
+                  SizedBox(height: 10),
+                  Form(
+                    key: formkey,
+                    child: Column(
+                      children: <Widget>[
+                        entryField("Email",
+                            icon: Icons.email,
+                            hintText: "john@gmail.com",
+                            validator: MultiValidator([
+                              RequiredValidator(errorText: 'Required'),
+                              EmailValidator(
+                                  errorText: 'Enter a valid email address')
+                            ])),
+                        entryField("Password",
+                            icon: Icons.lock,
+                            hintText: "password",
+                            validator: passwordValidator,
+                            isPassword: true),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                submitButton(context, validateForm, "Login"),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.centerRight,
-                  child: Text('Forgot Password ?',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                ),
-                _createAccountLabel(),
-              ],
+                  SizedBox(height: 10),
+                  submitButton(context, validateForm, "Login"),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    child: Text('Forgot Password ?',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500)),
+                  ),
+                  _createAccountLabel(),
+                ],
+              ),
             ),
           ),
           Positioned(top: 40, left: 0, child: backButton(context)),

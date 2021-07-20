@@ -6,12 +6,12 @@ import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
 
-class ProfilePage extends StatefulWidget {
+class AccountPage extends StatefulWidget {
   @override
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<ProfilePage>
+class MapScreenState extends State<AccountPage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
@@ -49,8 +49,8 @@ class MapScreenState extends State<ProfilePage>
                 height: 250.0,
                 child: Stack(children: [
                   Positioned(
-                      top: -height * .15,
-                      right: -MediaQuery.of(context).size.width * .4,
+                      top: 0,
+                      right: 0,
                       child: Hero(tag: "page_paint", child: BezierContainer())),
                   Column(
                     children: <Widget>[
@@ -119,19 +119,19 @@ class MapScreenState extends State<ProfilePage>
                                 });
                               },
                               child: Container(
-                                padding: EdgeInsets.only(
-                                  bottom: 5, // Space between underline and text
-                                ),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                  color: _tabIndex == 0
-                                      ? Palette.accentColor
-                                      : Colors.transparent,
-                                  width: 2.0, // Underline thickness
-                                ))),
-                                child: _labelText("Status")
-                              ),
+                                  padding: EdgeInsets.only(
+                                    bottom:
+                                        5, // Space between underline and text
+                                  ),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                    color: _tabIndex == 0
+                                        ? Palette.accentColor
+                                        : Colors.transparent,
+                                    width: 2.0, // Underline thickness
+                                  ))),
+                                  child: _labelText("Status")),
                             ),
                             InkWell(
                               child: Container(

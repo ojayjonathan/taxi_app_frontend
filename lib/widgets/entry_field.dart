@@ -4,7 +4,9 @@ import 'package:taxi_app/palette.dart';
 Widget entryField(String title,
     {Function validator,
     bool isPassword = false,
-    TextEditingController controller}) {
+    TextEditingController controller,
+    IconData icon,
+    String hintText}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: Column(
@@ -23,10 +25,11 @@ Widget entryField(String title,
         TextFormField(
           obscureText: isPassword,
           decoration: InputDecoration(
-            border: InputBorder.none,
-            fillColor: Color(0xfff3f3f4),
-            filled: true,
-          ),
+              border: InputBorder.none,
+              fillColor: Color(0xfff3f3f4),
+              filled: true,
+              prefixIcon: Icon(icon),
+              hintText: hintText),
           validator: validator,
           controller: controller,
         )
@@ -35,8 +38,7 @@ Widget entryField(String title,
   );
 }
 
-Widget phoneEntryField(String title,
-    {Function validator, bool isPassword = false}) {
+Widget phoneEntryField(String title, {Function validator}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: Column(
@@ -54,11 +56,12 @@ Widget phoneEntryField(String title,
         ),
         TextFormField(
           decoration: InputDecoration(
-              border: InputBorder.none,
-              fillColor: Color(0xfff3f3f4),
-              filled: true,
-              prefixText: "+254"),
-          obscureText: isPassword,
+            border: InputBorder.none,
+            fillColor: Color(0xfff3f3f4),
+            filled: true,
+            prefixIcon: Icon(Icons.phone),
+            hintText: "734434334",
+          ),
           validator: validator,
         )
       ],

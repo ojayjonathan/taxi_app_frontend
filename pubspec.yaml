@@ -25,6 +25,9 @@ dependencies:
     sdk: flutter
   form_field_validator: ^1.1.0  
   curved_navigation_bar: ^1.0.1 
+  after_layout: ^1.1.0
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -34,6 +37,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^1.2.0   
+
+flutter_native_splash:
+  color: "#F7892B"
+
+  android: true
+  web: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
