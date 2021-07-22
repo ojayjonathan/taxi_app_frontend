@@ -1,5 +1,12 @@
+import 'dart:convert';
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:taxi_app/screens/auth/signup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/screens/auth/services/auth_services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -17,44 +24,61 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  void validateForm() {
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
+
+  void validateForm() async {
     if (formkey.currentState.validate()) {
-      print("validate");
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Submiting...')));
-    } else {
-      print("not valid");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        'Submiting please wait...',
+        style: TextStyle(color: Palette.successColor),
+      )));
+      try {
+        await UserAuthentication()
+            .loginUser({"email": _email.text, "password": _password.text});
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          "Login was sucessfull",
+          style: TextStyle(color: Palette.successColor),
+        )));
+        Navigator.of(context).popAndPushNamed(AppRoutes.home);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          e.response.toString(),
+          style: TextStyle(color: Theme.of(context).errorColor),
+        )));
+      }
     }
   }
 
   Widget _createAccountLabel() {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpPage()));
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        alignment: Alignment.bottomCenter,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Don\'t have an account ?',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      alignment: Alignment.bottomCenter,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Don\'t have an account ?',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          InkWell(
+            onTap: () =>
+                Navigator.of(context).popAndPushNamed(AppRoutes.signup),
+            child: Text(
               'Register',
               style: TextStyle(
                   color: Palette.primary3Color,
                   fontSize: 13,
                   fontWeight: FontWeight.w600),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -69,7 +93,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
         TextSpan(
           text: 'ndogo',
-          //Color(0xffe46b10)
           style: TextStyle(color: Palette.accentColor, fontSize: 30),
         ),
       ]),
@@ -102,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       children: <Widget>[
                         entryField("Email",
+                            controller: _email,
                             icon: Icons.email,
                             hintText: "john@gmail.com",
                             validator: MultiValidator([
@@ -110,6 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                                   errorText: 'Enter a valid email address')
                             ])),
                         entryField("Password",
+                            controller: _password,
                             icon: Icons.lock,
                             hintText: "password",
                             validator: passwordValidator,
@@ -130,7 +155,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Positioned(top: 40, left: 0, child: backButton(context)),
         ],
       ),
     ));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/widgets/buttons.dart';
@@ -15,19 +16,15 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-
   Widget _signUpButton() {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpPage()));
-      },
+      onTap: () => Navigator.of(context).pushNamed(AppRoutes.signup),
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 13),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: BorderRadius.all(Radius.circular(999)),
           border: Border.all(color: Palette.primary3Color, width: 2),
         ),
         child: Text(
@@ -101,7 +98,12 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: submitButton(context, () {}, "Login", fontSize: 18),
+                  child: submitButton(
+                      context,
+                      () => Navigator.of(context).pushNamed(AppRoutes.login),
+                      "Login",
+                      fontSize: 18,
+                      borderRadius: 999),
                 ),
                 SizedBox(
                   height: 20,

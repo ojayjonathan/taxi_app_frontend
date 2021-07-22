@@ -1,5 +1,4 @@
-// ignore: non_constant_identifier_names
-String ip_address = "http://localhost:8000";
+String ipAddress = "http://192.168.43.60:8000/";
 
 class AppRoutes {
   static const splash = "/";
@@ -18,4 +17,5 @@ class AppRoutes {
   static const driverTripDetail = "/driver-trip-details";
   static const support = "/support-page/";
   static const signup = "/signup";
+  static const makeBooking = "/book-now";
 }

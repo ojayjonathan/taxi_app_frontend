@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
+import 'package:taxi_app/serializers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -43,15 +47,18 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   Future checkFirstSeen() async {
-    //SharedPreferences prefs = await SharedPreferences.getInstance();
-    //bool _seen = (prefs.getBool('seen') ?? false);
     bool _seen = true;
-    Map user = {};
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String _authToken = _prefs.get("authToken");
     if (_seen) {
-      if (user.isEmpty) {
+      if (_authToken == null) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
-      } else {}
+      } else {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      }
     }
+    //TODO: push user to introduction screen
+    
     // else {
     //   //await prefs.setBool('seen', true);
     //   Navigator.of(context).pushReplacement(

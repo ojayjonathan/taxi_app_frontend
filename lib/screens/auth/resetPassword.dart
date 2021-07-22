@@ -18,7 +18,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   TextEditingController _emailController = TextEditingController();
   void resetPassword() {
     if (formKey.currentState.validate()) {
-      //TODO:call reset password api
+      //TODO:call reset passwprint(_emailController.text)ord api
+      
     }
   }
 

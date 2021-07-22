@@ -6,7 +6,8 @@ Widget entryField(String title,
     bool isPassword = false,
     TextEditingController controller,
     IconData icon,
-    String hintText}) {
+    String hintText,
+   }) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: Column(
@@ -23,6 +24,7 @@ Widget entryField(String title,
           height: 10,
         ),
         TextFormField(
+          
           obscureText: isPassword,
           decoration: InputDecoration(
               border: InputBorder.none,
@@ -38,7 +40,8 @@ Widget entryField(String title,
   );
 }
 
-Widget phoneEntryField(String title, {Function validator}) {
+Widget phoneEntryField(String title,
+    {Function validator, TextEditingController controller}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: Column(
@@ -63,6 +66,7 @@ Widget phoneEntryField(String title, {Function validator}) {
             hintText: "734434334",
           ),
           validator: validator,
+          controller: controller,
         )
       ],
     ),

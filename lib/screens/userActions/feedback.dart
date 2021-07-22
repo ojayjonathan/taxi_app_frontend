@@ -9,7 +9,6 @@ class UserFeedBack extends StatefulWidget {
 }
 
 List<String> _dropDownItem = ['Z', 'A', 'B', 'C', 'D'];
-String _selectedDropDownItem = _dropDownItem[0];
 
 class _UserFeedBackState extends State<UserFeedBack> {
   @override
@@ -17,17 +16,19 @@ class _UserFeedBackState extends State<UserFeedBack> {
     return Scaffold(
       appBar: AppBar(
         title: Title(
-          child: Text("My Bookings"),
+          child: Text("Feedback"),
           color: Palette.dark[2],
         ),
         backgroundColor: Color(0xfffafafa),
-        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () {}),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () => Navigator.of(context).pop()),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
               onPressed: () {},
-              child: Text("Done",
+              child: Text("submit",
                   style: TextStyle(
                     color: Colors.white,
                   )),
@@ -38,7 +39,21 @@ class _UserFeedBackState extends State<UserFeedBack> {
       ),
       body: Container(
         padding: EdgeInsets.all(15),
-        child: ListView(),
+        child: ListView(
+          children: [
+            Form(
+              child: TextFormField(
+                maxLines: 8,
+                minLines: 6,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Color(0xfff3f3f4),
+                    filled: true,
+                    hintText: "write your feedback"),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

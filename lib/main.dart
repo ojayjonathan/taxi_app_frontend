@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/routing.dart';
-import 'package:taxi_app/screens/auth/loginPage.dart';
-import 'package:taxi_app/screens/auth/signup.dart';
-import 'package:taxi_app/screens/profile.dart';
-import 'package:taxi_app/screens/splash.dart';
-import 'package:taxi_app/screens/welcomePage.dart';
 
 void main() {
   runApp(MyApp());
@@ -40,7 +35,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       onGenerateRoute: generateRoute,
-      initialRoute: AppRoutes.splash,
+      initialRoute: AppRoutes.splash
     );
   }
 }

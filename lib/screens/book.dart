@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/screens/auth/loginPage.dart';
+import 'package:taxi_app/screens/bookCofirm.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import 'package:taxi_app/widgets/paints/curvePaint.dart';
 
@@ -19,7 +24,31 @@ List<Map> trips = [
   {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
 ];
 
-class Booking extends StatelessWidget {
+class Booking extends StatefulWidget {
+  const Booking({Key key}) : super(key: key);
+
+  @override
+  _BookingState createState() => _BookingState();
+}
+
+class _BookingState extends State<Booking> {
+  var operationRoutes;
+
+  void fetchData() async {
+    final response = await Dio().get("${ipAddress}api/routes/");
+    if (response.statusCode == 200) {
+      setState(() {
+        operationRoutes = response.data;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -32,7 +61,7 @@ class Booking extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "${item["from"]} - ${item["to"]}",
+              "${item["origin"]["name"]} - ${item["destination"]["name"]}",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Palette.dark[2],
@@ -53,11 +82,22 @@ class Booking extends StatelessWidget {
             ),
             actionButton(context, "Book Now", () {
               Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 1000),
-                      pageBuilder: (context, _, __) => LoginPage()));
-            })
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BookConfirm(
+                          selectedRoute: item,
+                        )),
+              );
+              ;
+            },
+
+                //   Navigator.push(
+                //       context,
+                //       PageRouteBuilder(
+                //           transitionDuration: const Duration(milliseconds: 1000),
+                //           pageBuilder: (context, _, __) => LoginPage()));
+                // },
+                padding: 5)
           ],
         ),
         decoration: BoxDecoration(
@@ -69,6 +109,7 @@ class Booking extends StatelessWidget {
 
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
+          index: 1,
           backgroundColor: Palette.accentColor,
           items: <Widget>[
             Icon(
@@ -80,8 +121,13 @@ class Booking extends StatelessWidget {
             Icon(Icons.phone, size: 30, color: Palette.dark[2]),
           ],
           onTap: (index) {
-            //TODO: implement routing
-            print(index);
+            if (index == 0) {
+              Navigator.of(context).pushNamed(AppRoutes.account);
+            } else if (index == 2) {
+              Navigator.of(context).pushNamed(AppRoutes.support);
+            } else {
+              Navigator.of(context).pushNamed(AppRoutes.home);
+            }
           }),
       body: Container(
         child: Column(
@@ -135,20 +181,23 @@ class Booking extends StatelessWidget {
                 )
               ],
             ),
-            Expanded(
-              child: GridView.count(
-                padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                children: [
-                  // ignore: sdk_version_ui_as_code
-                  ...trips.map((item) => _card(item))
-                ],
-              ),
-            ),
+            operationRoutes == null
+                ? Text("loading")
+                : Expanded(
+                    child: GridView.count(
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      childAspectRatio: 1.2,
+                      children: [
+                        // ignore: sdk_version_ui_as_code
+                        ...operationRoutes.map((item) => _card(item))
+                      ],
+                    ),
+                  ),
           ],
         ),
       ),

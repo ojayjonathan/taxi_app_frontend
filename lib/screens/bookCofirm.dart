@@ -3,16 +3,18 @@ import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 
 class BookConfirm extends StatefulWidget {
-  const BookConfirm({Key key}) : super(key: key);
+  final Map selectedRoute;
+  const BookConfirm({Key key, this.selectedRoute}) : super(key: key);
 
   @override
-  _BookConfirmState createState() => _BookConfirmState();
+  _BookConfirmState createState() => _BookConfirmState(this.selectedRoute);
 }
 
 class _BookConfirmState extends State<BookConfirm> {
+  Map _travelRoute;
+  _BookConfirmState(this._travelRoute);
   @override
   void initState() {
-    Map selectedRoute;
     int selectedSeats = 1;
     super.initState();
   }
@@ -20,7 +22,6 @@ class _BookConfirmState extends State<BookConfirm> {
   double _sliderDiscreteValue = 1;
 
   DateTime _date = DateTime(2020, 11, 17);
-
   void _selectDate() async {
     final DateTime newDate = await showDatePicker(
       context: context,
@@ -70,7 +71,7 @@ class _BookConfirmState extends State<BookConfirm> {
                                 fontWeight: FontWeight.w500,
                                 color: Palette.dark[2])),
                       ),
-                      Text("Kisii",
+                      Text("${_travelRoute["origin"]["name"]}",
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -88,7 +89,7 @@ class _BookConfirmState extends State<BookConfirm> {
                                 fontWeight: FontWeight.w500,
                                 color: Palette.dark[2])),
                       ),
-                      Text("Nakuru",
+                      Text("${_travelRoute["destination"]["name"]}",
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -120,9 +121,14 @@ class _BookConfirmState extends State<BookConfirm> {
                         },
                       ),
                     ),
-                    Text(
-                      "${_sliderDiscreteValue.toInt()}",
-                      textAlign: TextAlign.center,
+                    Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        "${_sliderDiscreteValue.toInt()}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15),
+                      ),
                     ),
                     Text(
                       "Select Departure Date",
@@ -143,7 +149,7 @@ class _BookConfirmState extends State<BookConfirm> {
                             icon: Icon(
                               Icons.calendar_today,
                               color: Palette.accentColor,
-                              size: 40,
+                              size: 32,
                             ))
                       ],
                     ),

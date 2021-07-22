@@ -2,30 +2,32 @@ import "package:flutter/material.dart";
 import 'package:taxi_app/palette.dart';
 
 Widget submitButton(BuildContext context, Function validateForm, String label,
-    {double fontSize: 20}) {
+    {double fontSize: 20, double borderRadius: 5}) {
   return InkWell(
     onTap: validateForm,
+    splashColor: Colors.red,
     child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Palette.primary2Color, Palette.primaryColor])),
-        child: Text(
-          label,
-          style: TextStyle(fontSize: fontSize, color: Colors.white),
-        )),
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(vertical: 15),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+          gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [Palette.primary2Color, Palette.primaryColor])),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: fontSize, color: Colors.white),
+      ),
+    ),
   );
 }
 
@@ -50,12 +52,13 @@ Widget backButton(BuildContext context) {
   );
 }
 
-Widget actionButton(BuildContext context, String label, Function onPressed) {
+Widget actionButton(BuildContext context, String label, Function onPressed,
+    {double padding:8}) {
   return TextButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(primary: Palette.accentColor),
       child: Container(
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: EdgeInsets.symmetric(vertical: padding),
           alignment: Alignment.center,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -85,7 +88,7 @@ Widget cancelButton(BuildContext context, String label, Function onPressed) {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(primary: Color(0xffACAFC7)),
       child: Container(
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: EdgeInsets.symmetric(vertical: 8),
           alignment: Alignment.center,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
