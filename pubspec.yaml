@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -28,6 +28,8 @@ dependencies:
   after_layout: ^1.1.0
   dio: ^4.0.0
   shared_preferences: ^2.0.6
+  introduction_screen: ^2.1.0
+  flutter_svg: ^0.22.0
 
 
 
@@ -61,8 +63,16 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/taxi.png
     - assets/profile.png
+    - assets/graphics/intro_p3.svg
+    - assets/graphics/contact.svg
+    - assets/graphics/intro_p3_.svg
+    - assets/graphics/intro_p1.svg
+    - assets/graphics/taxi.svg
+    - assets/graphics/intro_p2.svg
+    - assets/graphics/lp.svg
+    - assets/graphics/rp.svg
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
-import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import 'package:taxi_app/widgets/paints/welcomePagePaint.dart';
-// import 'package:google_fonts/google_fonts.dart';
+
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -84,8 +84,8 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                           Align(
                               alignment: Alignment.bottomCenter,
-                              child: Image.asset(
-                                "assets/taxi.png",
+                              child: SvgPicture.asset(
+                                "assets/graphics/taxi.svg",
                                 width: width * 0.75,
                               ))
                         ],

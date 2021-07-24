@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ import 'package:taxi_app/serializers.dart';
 Duration reqTimeout = Duration(microseconds: 10000);
 
 class UserAuthentication {
-  Future<void> loginUser(Map data) async {
+  static Future<void> loginUser(Map data) async {
     try {
       final response =
           await Dio().post("${ipAddress}api/auth/login/", data: data);
@@ -19,20 +20,22 @@ class UserAuthentication {
     }
   }
 
-  Future<String> getAuthToken(String authToken) async {
+  static Future<String> getAuthToken() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.getString("authToken");
   }
 
-  Future<void> registerUser(String data) async {
+  static Future<void> registerUser(String data) async {
     try {
       await Dio().post("${ipAddress}api/auth/customer/register/", data: data);
+    } on SocketException catch (e) {
+      throw SocketException(e.message.toString());
     } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response ?? e.message);
+      throw DioError(requestOptions: null, response: e.response.data["errors"] ?? e.message);
     }
   }
 
-  Future<User> updateProfile(String data) async {
+  static Future<User> updateProfile(String data) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     try {
       String authToken = _prefs.getString("authToken");
@@ -40,13 +43,15 @@ class UserAuthentication {
           options: Options(headers: {'Authorization': 'Token $authToken'}));
       _prefs.setString("user", jsonEncode(_profile.data));
       return User.fromJson(_profile.data as Map);
+    } on SocketException catch (e) {
+      throw SocketException(e.message.toString());
     } on DioError catch (e) {
       throw DioError(requestOptions: null, response: e.response ?? e.message);
     }
   }
 
-  Future<void> uploadProfileIMage() async {}
-  Future<User> getUserProfile() async {
+  static Future<void> uploadProfileIMage() async {}
+  static Future<User> getUserProfile() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String _userData = _prefs.get("user");
     if (_userData != null) {
@@ -58,6 +63,8 @@ class UserAuthentication {
             options: Options(headers: {'Authorization': 'Token $authToken'}));
         _prefs.setString("user", jsonEncode(profile.data));
         return User.fromJson(profile.data as Map);
+      } on SocketException catch (e) {
+        throw SocketException(e.message.toString());
       } on DioError catch (e) {
         throw DioError(requestOptions: null, response: e.response ?? e.message);
       }

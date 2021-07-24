@@ -1,28 +1,13 @@
-import 'dart:convert';
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
-import 'package:taxi_app/screens/auth/loginPage.dart';
-import 'package:taxi_app/screens/bookCofirm.dart';
+import 'package:taxi_app/screens/makeBooking.dart';
+import 'package:taxi_app/serializers.dart';
+import 'package:taxi_app/services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import 'package:taxi_app/widgets/paints/curvePaint.dart';
-
-List<Map> trips = [
-  {"from": "Nakuru", "to": "Nairobi", "cost": "3000"},
-  {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
-  {"from": "Nakuru", "to": "Nairobi", "cost": "3000"},
-  {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
-  {"from": "Nakuru", "to": "Nairobi", "cost": "3000"},
-  {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
-  {"from": "Nakuru", "to": "Nairobi", "cost": "3000"},
-  {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
-  {"from": "Nakuru", "to": "Nairobi", "cost": "3000"},
-  {"from": "Kisii", "to": "Nairobi", "cost": "5000"},
-];
 
 class Booking extends StatefulWidget {
   const Booking({Key key}) : super(key: key);
@@ -32,15 +17,28 @@ class Booking extends StatefulWidget {
 }
 
 class _BookingState extends State<Booking> {
-  var operationRoutes;
-
+  List<dynamic> operationRoutes;
+  bool _loading = true;
   void fetchData() async {
-    final response = await Dio().get("${ipAddress}api/routes/");
-    if (response.statusCode == 200) {
-      setState(() {
-        operationRoutes = response.data;
-      });
+    try {
+      operationRoutes = await BookingServices.getroutes();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+         "an error occured",
+          style: TextStyle(color: Theme.of(context).errorColor),
+        ),
+        duration: Duration(seconds: 10),
+        action: SnackBarAction(
+          label: "retry",
+          onPressed: () async {
+            fetchData();
+           _loading =true;
+          },
+        ),
+      ));
     }
+    _loading = false;
   }
 
   @override
@@ -52,7 +50,7 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    Widget _card(Map item) {
+    Widget _card(TravelRoute _route) {
       return Container(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
         alignment: Alignment.bottomCenter,
@@ -61,7 +59,7 @@ class _BookingState extends State<Booking> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "${item["origin"]["name"]} - ${item["destination"]["name"]}",
+              "${_route.origin} - ${_route.destination}",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Palette.dark[2],
@@ -71,7 +69,7 @@ class _BookingState extends State<Booking> {
               height: 15,
             ),
             Text(
-              "Ksh ${item["cost"]}",
+              "Ksh ${_route.cost}",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Palette.dark[2],
@@ -83,21 +81,9 @@ class _BookingState extends State<Booking> {
             actionButton(context, "Book Now", () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => BookConfirm(
-                          selectedRoute: item,
-                        )),
+                MaterialPageRoute(builder: (context) => BookConfirm()),
               );
-              ;
-            },
-
-                //   Navigator.push(
-                //       context,
-                //       PageRouteBuilder(
-                //           transitionDuration: const Duration(milliseconds: 1000),
-                //           pageBuilder: (context, _, __) => LoginPage()));
-                // },
-                padding: 5)
+            }, padding: 5)
           ],
         ),
         decoration: BoxDecoration(
@@ -109,6 +95,7 @@ class _BookingState extends State<Booking> {
 
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
+          height: 50,
           index: 1,
           backgroundColor: Palette.accentColor,
           items: <Widget>[
@@ -181,8 +168,10 @@ class _BookingState extends State<Booking> {
                 )
               ],
             ),
-            operationRoutes == null
-                ? Text("loading")
+            _loading
+                ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Colors.black87),
+                  )
                 : Expanded(
                     child: GridView.count(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
@@ -194,7 +183,8 @@ class _BookingState extends State<Booking> {
                       childAspectRatio: 1.2,
                       children: [
                         // ignore: sdk_version_ui_as_code
-                        ...operationRoutes.map((item) => _card(item))
+                        ...operationRoutes
+                            .map((item) => _card(TravelRoute.fromJson(item)))
                       ],
                     ),
                   ),

@@ -1,11 +1,10 @@
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
-import 'package:taxi_app/screens/auth/services/auth_services.dart';
+import 'package:taxi_app/screens/auth/auth_services.dart';
 import 'package:taxi_app/screens/profilePage.dart';
 import 'package:taxi_app/serializers.dart';
 
@@ -28,7 +27,7 @@ class MapScreenState extends State<AccountPage>
   void getUser() async {
     // ignore: invalid_return_type_for_catch_error
     try {
-      user = await UserAuthentication().getUserProfile();
+      user = await UserAuthentication.getUserProfile();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -172,6 +171,7 @@ class MapScreenState extends State<AccountPage>
       ),
       bottomNavigationBar: CurvedNavigationBar(
           index: 0,
+          height: 50,
           backgroundColor: Palette.accentColor,
           items: <Widget>[
             Icon(
@@ -244,6 +244,4 @@ class MapScreenState extends State<AccountPage>
       ),
     );
   }
-
-  
 }

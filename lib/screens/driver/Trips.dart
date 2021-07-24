@@ -11,7 +11,6 @@ class Trip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double _height = MediaQuery.of(context).size.height;
-    final double _width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.height,

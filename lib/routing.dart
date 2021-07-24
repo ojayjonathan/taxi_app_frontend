@@ -4,13 +4,15 @@ import 'package:taxi_app/screens/auth/loginPage.dart';
 import 'package:taxi_app/screens/auth/resetPassword.dart';
 import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/screens/book.dart';
-import 'package:taxi_app/screens/bookCofirm.dart';
+import 'package:taxi_app/screens/makeBooking.dart';
 import 'package:taxi_app/screens/UserAccount.dart';
+import 'package:taxi_app/screens/intro.dart';
 import 'package:taxi_app/screens/splash.dart';
 import 'package:taxi_app/screens/support.dart';
-import 'package:taxi_app/screens/userActions/feedback.dart';
-import 'package:taxi_app/screens/userActions/userBookHistory.dart';
 import 'package:taxi_app/screens/welcomePage.dart';
+
+import 'screens/userAccount/feedback.dart';
+import 'screens/userAccount/userBookHistory.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -36,6 +38,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => BookConfirm());
     case AppRoutes.support:
       return MaterialPageRoute(builder: (context) => ContactUs());
+    case AppRoutes.introduction:
+      return MaterialPageRoute(builder: (context) => OnBoardingPage());
+
     //TODO: return page not found
     default:
       return MaterialPageRoute(builder: (context) => WelcomePage());

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
-import 'package:taxi_app/screens/auth/services/auth_services.dart';
+import 'package:taxi_app/screens/auth/auth_services.dart';
+import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -36,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
         style: TextStyle(color: Palette.successColor),
       )));
       try {
-        await UserAuthentication().registerUser(jsonEncode({
+        await UserAuthentication.registerUser(jsonEncode({
           "email": _email.text,
           "password": _password.text,
           "first_name": _firstName.text,
@@ -119,14 +119,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         child: Stack(
           children: <Widget>[
             Positioned(top: 0, right: 0, child: BezierContainer()),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -162,8 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 icon: Icons.person,
                                 hintText: "doe"),
                             phoneEntryField("Phone number",
-                                validator:
-                                    RequiredValidator(errorText: "Required"),
+                                validator: phoneValidator,
                                 controller: _phoneNumber),
                             entryField("Password",
                                 controller: _password,
@@ -186,15 +184,5 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
-  }
-}
-
-String phoneValidator(value) {
-  if (value.isEmpty) {
-    return "Required";
-  } else if (value.length != 9) {
-    return "Please provide valid phone number";
-  } else {
-    return null;
   }
 }

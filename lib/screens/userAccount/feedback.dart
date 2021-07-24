@@ -8,7 +8,6 @@ class UserFeedBack extends StatefulWidget {
   _UserFeedBackState createState() => _UserFeedBackState();
 }
 
-List<String> _dropDownItem = ['Z', 'A', 'B', 'C', 'D'];
 
 class _UserFeedBackState extends State<UserFeedBack> {
   @override

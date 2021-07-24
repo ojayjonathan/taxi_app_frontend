@@ -1,12 +1,9 @@
-import 'dart:convert';
-import 'dart:convert';
+import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/constants.dart';
-import 'package:taxi_app/screens/auth/services/auth_services.dart';
+import 'package:taxi_app/screens/auth/auth_services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -35,14 +32,21 @@ class _LoginPageState extends State<LoginPage> {
         style: TextStyle(color: Palette.successColor),
       )));
       try {
-        await UserAuthentication()
-            .loginUser({"email": _email.text, "password": _password.text});
+        await UserAuthentication.loginUser(
+            {"email": _email.text, "password": _password.text});
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
           "Login was sucessfull",
           style: TextStyle(color: Palette.successColor),
         )));
         Navigator.of(context).popAndPushNamed(AppRoutes.home);
+      } on SocketException {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Connection error ",
+            style: TextStyle(color: Theme.of(context).errorColor),
+          ),
+        ));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -107,13 +111,10 @@ class _LoginPageState extends State<LoginPage> {
       height: height,
       child: Stack(
         children: <Widget>[
-          Positioned(
-              top: 0,
-              right: 0,
-              child: Hero(tag: "page_paint", child: BezierContainer())),
+          Positioned(top: 0, right: 0, child: BezierContainer()),
           Center(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

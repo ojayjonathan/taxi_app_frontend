@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
+import 'package:taxi_app/screens/auth/auth_services.dart';
 import 'package:taxi_app/serializers.dart';
 import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
@@ -20,6 +21,19 @@ class _ProfilePageState extends State<ProfilePage> {
   final FocusNode myFocusNode = FocusNode();
   _ProfilePageState(this.user);
   GlobalKey<FormState> profileForm = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
+
+  @override
+  void initState() {
+    _emailController.text = user.email;
+    _firstNameController.text = user.firstName;
+    _lastNameController.text = user.lastName;
+    _phoneNumberController.text = user.phoneNumber;
+    super.initState();
+  }
 
   void _sumitForm() async {
     if (profileForm.currentState.validate()) {
@@ -33,22 +47,21 @@ class _ProfilePageState extends State<ProfilePage> {
         style: TextStyle(color: Palette.successColor),
       )));
       try {
-        // await UserAuthentication().registerUser(jsonEncode({
-        //   "email": _email.text,
-        //   "password": _password.text,
-        //   "first_name": _firstName.text,
-        //   "last_name": _lastName.text,
-        //   "phone_number": "+254${_phoneNumber.text}",
-        // }));
-        //if registration was successful
-
+        User _updatedUser = await UserAuthentication.updateProfile(jsonEncode({
+          "email": _emailController.text,
+          "first_name": _firstNameController.text,
+          "last_name": _lastNameController.text,
+          "phone_number": "+254${_phoneNumberController.text}",
+        }));
+        setState(() {
+          user = _updatedUser;
+        });
+        //if profile update was successful
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-          "Profile was sucessfull",
+          "Profile update was sucessfull",
           style: TextStyle(color: Palette.successColor),
         )));
-        // push the user to login page
-        Navigator.of(context).pushNamed(AppRoutes.login);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -64,6 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
     super.dispose();
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
   }
 
   @override
@@ -71,6 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (user == null) {
       return SizedBox();
     }
+
     return Form(
       key: profileForm,
       child: Padding(
@@ -125,10 +143,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration: const InputDecoration(
                           hintText: "Enter First Name",
                         ),
-                        initialValue: user.firstName,
                         enabled: !_status,
                         autofocus: !_status,
                         validator: RequiredValidator(errorText: "Required"),
+                        controller: _firstNameController,
                       ),
                     ),
                     Flexible(
@@ -136,9 +154,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration: const InputDecoration(
                           hintText: "Enter Last Name",
                         ),
-                        initialValue: user.lastName,
                         enabled: !_status,
                         autofocus: !_status,
+                        controller: _lastNameController,
                         validator: RequiredValidator(errorText: "Required"),
                       ),
                     ),
@@ -166,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration:
                             const InputDecoration(hintText: "Enter Email"),
                         enabled: !_status,
-                        initialValue: user.email,
+                        controller: _emailController,
                         validator: MultiValidator([
                           RequiredValidator(errorText: "Required"),
                           EmailValidator(
@@ -196,11 +214,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     Flexible(
                       child: TextFormField(
                         decoration: const InputDecoration(
-                            hintText: "Enter Mobile Number",
-                            prefixText: "+254"),
+                          hintText: "Enter Mobile Number",
+                        ),
                         enabled: !_status,
-                        initialValue: user.phoneNumber,
                         validator: phoneValidator,
+                        controller: _phoneNumberController,
                       ),
                     ),
                   ],
