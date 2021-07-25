@@ -18,7 +18,7 @@ class BookingServices {
   static Future<List<dynamic>> getTrips({String query: ""}) async {
     try {
       final response = await Dio()
-          .post("${ipAddress}api/trip/", queryParameters: {"from": query});
+          .get("${ipAddress}api/trip/");
       return response.data as List;
     } on SocketException catch (e) {
       throw SocketException(e.message.toString());
@@ -99,3 +99,17 @@ class BookingServices {
     }
   }
 }
+
+Future<void> feedback(String message) async {
+     try {
+      String authToken = await UserAuthentication.getAuthToken();
+      final response = await Dio().post("${ipAddress}api/feedback/",
+          options: Options(headers: {'Authorization': 'Token $authToken'}),
+          data: {"message": message});
+      return response.data as List;
+    } on SocketException catch (e) {
+      throw SocketException(e.message.toString());
+    } on DioError catch (e) {
+      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    }
+  }

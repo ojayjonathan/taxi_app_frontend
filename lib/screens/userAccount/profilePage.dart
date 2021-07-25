@@ -85,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
+    if (user.userId == null) {
       return SizedBox();
     }
 

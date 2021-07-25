@@ -33,41 +33,40 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         titleTextStyle: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w600,
-            color: const Color(0xff212529)),
+            color: const Color(0xff495057)),
         descriptionPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
         imagePadding: EdgeInsets.all(15),
         imageAlignment: Alignment.center,
-        bodyAlignment: Alignment.center,
         bodyTextStyle: TextStyle(
-          color: Color(0xff343a40),
+          color:Color(0xff495057), fontWeight: FontWeight.w400
         ));
 
     return IntroductionScreen(
       key: introKey,
       pages: [
         PageViewModel(
-          title: "page 1",
+          title: "Welcome",
           body:
               "Instead of having to buy an entire share, invest any amount you want.",
           image: _buldSvg("intro_p1.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "page 2",
+          title: "Create Account",
           body:
               "Instead of having to buy an entire share, invest any amount you want.",
-          image: _buldSvg("intro_p2.svg"),
+          image: _buldSvg("taxi.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "page 3",
+          title: "Make a booking",
           body:
               "Download the Stockpile app and master the market with our mini-lesson.",
           image: _buldSvg("intro_p3_.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "page 4",
+          title: "Get notified",
           body:
               "Kids and teens can track their stocks 24/7 and place trades that you approve.",
           image: _buldSvg("intro_p3.svg"),

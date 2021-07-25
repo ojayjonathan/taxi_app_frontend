@@ -19,7 +19,7 @@ class User {
         email: json["user"]["email"],
         lastName: json["user"]["last_name"],
         firstName: json["user"]["first_name"],
-        phoneNumber: json["phone_number"],
+        phoneNumber: (json["phone_number"] as String).replaceAll("+254", ""),
         profileImage: json["profile_image"]);
   }
 }
@@ -45,8 +45,13 @@ class TripSerializer {
   TripSerializer(this.arrival, this.departure, this.status, this.availableSeats,
       this.id, this.route);
   factory TripSerializer.fromJson(Map<String, dynamic> json) {
-    return TripSerializer(json["arrival"], json["departure"], json["status"],
-        json["available_seats"], json["id"], json["route"]);
+    return TripSerializer(
+        json["arrival"],
+        json["departure"],
+        json["status"],
+        json["available_seats"],
+        json["id"],
+        TravelRoute.fromJson(json["route"]));
   }
 }
 
@@ -59,7 +64,11 @@ class CustomerTripBooking {
   CustomerTripBooking(
       this.id, this.trip, this.numSeats, this.cost, this.status);
   factory CustomerTripBooking.fromJson(Map<String, dynamic> json) {
-    return CustomerTripBooking(json["id"], json["tripSerializer"],
-        json["seats"], json["cost"], json["status"]);
+    return CustomerTripBooking(
+        json["id"],
+        TripSerializer.fromJson(json["trip"]),
+        json["seats"],
+        json["cost"],
+        json["status"]);
   }
 }

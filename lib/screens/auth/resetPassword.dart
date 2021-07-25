@@ -1,4 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/screens/auth/auth_services.dart';
+import 'package:taxi_app/screens/auth/loginPage.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -15,17 +19,60 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _newPasswordKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
-  void resetPassword() {
+  TextEditingController _resetCodeController = TextEditingController();
+  TextEditingController _newPassordController = TextEditingController();
+  String uid;
+  void resetPassword() async {
     if (formKey.currentState.validate()) {
-      //TODO:call reset passwprint(_emailController.text)ord api
-      
+      try {
+        final res = await UserAuthentication.resetPassword(
+            data: {"email": _emailController.text});
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(res["message"],
+                style: TextStyle(color: Palette.successColor))));
+        setState(() {
+          uid = res["uid"];
+        });
+        showDialog<void>(context: context, builder: (context) => _dialog());
+      } on DioError catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          e.response.toString(),
+          style: TextStyle(color: Theme.of(context).errorColor),
+        )));
+      }
+    }
+  }
+
+  void setNewPassword() async {
+    if (_newPasswordKey.currentState.validate()) {
+      try {
+        final res = await UserAuthentication.setNewPassword(data: {
+          "new_password": _newPassordController.text,
+          "uid": uid,
+          "short_code": _resetCodeController.text
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(res["message"],
+                style: TextStyle(color: Palette.successColor))));
+        Navigator.of(context).pushNamed(AppRoutes.login);
+      } on DioError catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          e.response.toString(),
+          style: TextStyle(color: Theme.of(context).errorColor),
+        )));
+      }
     }
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _newPassordController.dispose();
+    _resetCodeController.dispose();
     super.dispose();
   }
 
@@ -54,15 +101,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         child: Stack(
           children: <Widget>[
             Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
+              top: 0,
               right: 0,
               child: BezierContainer(),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: height * .25),
                   _title(),
@@ -90,6 +136,44 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _dialog() {
+    return AlertDialog(
+      title: Text('Confirm bookig'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Form(
+              key: _newPasswordKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _resetCodeController,
+                    decoration: InputDecoration(hintText: "Enter code"),
+                    keyboardType: TextInputType.number,
+                    validator: RequiredValidator(errorText: "Required"),
+                  ),
+                  TextFormField(
+                    controller: _newPassordController,
+                    decoration: InputDecoration(hintText: "New password"),
+                    validator: passwordValidator,
+                  ),
+                ],
+              ))
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('CANCEL', style: TextStyle(color: Palette.accentColor)),
+        ),
+        TextButton(
+          onPressed: setNewPassword,
+          child: Text('CONFIRM', style: TextStyle(color: Palette.accentColor)),
+        ),
+      ],
     );
   }
 }

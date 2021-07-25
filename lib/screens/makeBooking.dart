@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/serializers.dart';
 import 'package:taxi_app/services.dart';
@@ -12,13 +13,14 @@ class BookConfirm extends StatefulWidget {
 
 class _BookConfirmState extends State<BookConfirm> {
   List<dynamic> _availableTrip;
-  int selectedSeats = 1;
-
+  TextEditingController _numSeatsController = TextEditingController();
+  GlobalKey<FormState> _form = GlobalKey<FormState>();
+  TripSerializer _selectedTrip;
   _BookConfirmState();
   @override
   void initState() {
-    super.initState();
     _init();
+    super.initState();
   }
 
   void _showSnackBar(String message, Color color,
@@ -28,13 +30,16 @@ class _BookConfirmState extends State<BookConfirm> {
           message,
           style: TextStyle(color: color),
         ),
-        duration: duration ?? Duration(microseconds: 1000),
+        duration: duration ?? Duration(milliseconds: 10000),
         action: action));
   }
 
   void _init() async {
     try {
-      _availableTrip = await BookingServices.getTrips();
+      List _apiData = await BookingServices.getTrips();
+      setState(() {
+        _availableTrip = _apiData;
+      });
     } catch (e) {
       _showSnackBar("An error occured ...", Theme.of(context).errorColor,
           action: SnackBarAction(
@@ -48,63 +53,154 @@ class _BookConfirmState extends State<BookConfirm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          "Booking",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w500, fontSize: 28),
+        ),
+      ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(15),
         height: MediaQuery.of(context).size.height,
-        child: Column(
-          children: <Widget>[
-            backButton(context),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 20),
-              child: Text(
-                "Booking",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Palette.headerColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40),
-              ),
+        child: _availableTrip != null
+            ? Column(
+                children: <Widget>[
+                  ..._availableTrip
+                      .map((trip) => _tripCard(TripSerializer.fromJson(trip))),
+                  _availableTrip.isEmpty
+                      ? Text("No trip scheduled for this route")
+                      : SizedBox(
+                          height: 0,
+                        )
+                ],
+              )
+            : Container(
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.black87),
+                )),
+      ),
+    );
+  }
+
+  Widget _tripCard(TripSerializer trip) {
+    String departure = trip.departure;
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      elevation: 3,
+      shadowColor: Colors.grey[200],
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Route: ${trip.route.origin} - ${trip.route.destination}",
+                    style: textstyle),
+                Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: departure != null
+                        ? Text("Departure: ${trip.departure}", style: textstyle)
+                        : SizedBox(height: 0)),
+                Text("Available seats: ${trip.availableSeats}",
+                    style: textstyle)
+              ],
             ),
-            _availableTrip == null
-                ? Container(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(Colors.white),
-                    ),
-                )
-                : ListView(
-                    children: [
-                      ..._availableTrip.map(
-                          (trip) => _tripCard(TripSerializer.fromJson(trip))),
-                      _availableTrip.length == 0 ??
-                          Text("No schedule found for this  route")
-                    ],
-                  )
+            actionButton(context, "Book Now", () {
+              setState(() {
+                _numSeatsController.text = trip.availableSeats.toString();
+                _selectedTrip = trip;
+              });
+              showDialog<void>(
+                  context: context, builder: (context) => _dialog());
+            }, padding: 5),
           ],
         ),
       ),
     );
   }
 
-  Widget _tripCard(TripSerializer trip) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _dialog() {
+    String _validator(String value) {
+      if (int.parse(value) > _selectedTrip.availableSeats) {}
+      if (int.parse(value) < 0) {
+        return "Provide valid number";
+      } else {
+        return null;
+      }
+    }
+
+    void _makeBooking() async {
+      if (_form.currentState.validate()) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          "Submiting please wait...",
+          style: TextStyle(color: Palette.successColor),
+        )));
+        try {
+          final res = await BookingServices.makebooking(
+              _selectedTrip.id, int.parse(_numSeatsController.text));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            "Booking confirmed",
+            style: TextStyle(color: Palette.successColor),
+          )));
+          Navigator.of(context).popAndPushNamed(AppRoutes.bookHistory);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            e.response.toString(),
+            style: TextStyle(color: Theme.of(context).errorColor),
+          )));
+        }
+      }
+    }
+
+    return Container(
+      height: 300,
+      child: AlertDialog(
+        title: Text('Confirm bookig'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Route: ${trip.route.origin} - ${trip.route.destination}",
-                style: textstyle),
-            Text("Departure: ${trip.departure}", style: textstyle),
-            Text("Available seats: ${trip.availableSeats}", style: textstyle)
+            Form(
+                key: _form,
+                child: TextFormField(
+                  controller: _numSeatsController,
+                  decoration: InputDecoration(
+                      helperText: "Select number of seats to book"),
+                  validator: _validator,
+                  keyboardType: TextInputType.number,
+                ))
           ],
         ),
-        //TODO:open dialog box for booking
-        TextButton(onPressed: () {}, child: Text("book")),
-      ],
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('CANCEL', style: TextStyle(color: Palette.accentColor)),
+          ),
+          TextButton(
+            onPressed: _makeBooking,
+            child:
+                Text('CONFIRM', style: TextStyle(color: Palette.accentColor)),
+          ),
+        ],
+      ),
     );
   }
 
-TextStyle textstyle = TextStyle(
-    color: Palette.dark[2], fontWeight: FontWeight.bold, fontSize: 18);
+  TextStyle textstyle =
+      TextStyle(color: Palette.dark[3], fontWeight: FontWeight.w600);
 }

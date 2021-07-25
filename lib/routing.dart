@@ -5,7 +5,7 @@ import 'package:taxi_app/screens/auth/resetPassword.dart';
 import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/screens/book.dart';
 import 'package:taxi_app/screens/makeBooking.dart';
-import 'package:taxi_app/screens/UserAccount.dart';
+import 'package:taxi_app/screens/userAccount/UserAccount.dart';
 import 'package:taxi_app/screens/intro.dart';
 import 'package:taxi_app/screens/splash.dart';
 import 'package:taxi_app/screens/support.dart';

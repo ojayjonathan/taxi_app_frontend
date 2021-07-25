@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/palette.dart';
+import 'package:taxi_app/services.dart';
 
 class UserFeedBack extends StatefulWidget {
   const UserFeedBack({Key key}) : super(key: key);
@@ -8,8 +9,28 @@ class UserFeedBack extends StatefulWidget {
   _UserFeedBackState createState() => _UserFeedBackState();
 }
 
-
 class _UserFeedBackState extends State<UserFeedBack> {
+  TextEditingController _message = TextEditingController();
+  void _sendFeedback() async {
+    if (_message.text != null) {
+      try {
+        await feedback(_message.text);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          "Thank you for the feedback",
+          style: TextStyle(color: Palette.successColor),
+        )));
+        Navigator.of(context).pop();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          "An  error occured",
+          style: TextStyle(color: Theme.of(context).errorColor),
+        )));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +47,7 @@ class _UserFeedBackState extends State<UserFeedBack> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
-              onPressed: () {},
+              onPressed: _sendFeedback,
               child: Text("submit",
                   style: TextStyle(
                     color: Colors.white,

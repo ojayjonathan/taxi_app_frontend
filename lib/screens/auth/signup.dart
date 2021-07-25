@@ -46,10 +46,8 @@ class _SignUpPageState extends State<SignUpPage> {
         //if registration was successful
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          "Registration was sucessfull",
-          style: TextStyle(color: Palette.successColor),
-        )));
+            content: Text("Registration was sucessfull",
+                style: TextStyle(color: Palette.successColor))));
         // push the user to login page
         Navigator.of(context).pushNamed(AppRoutes.login);
       } catch (e) {
@@ -125,7 +123,8 @@ class _SignUpPageState extends State<SignUpPage> {
           children: <Widget>[
             Positioned(top: 0, right: 0, child: BezierContainer()),
             Container(
-              padding: EdgeInsets.all(20),
+              padding:
+                  EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

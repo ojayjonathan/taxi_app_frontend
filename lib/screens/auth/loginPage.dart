@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
@@ -146,10 +145,15 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 10),
                   submitButton(context, validateForm, "Login"),
                   Container(
+                    padding: EdgeInsets.only(top: 8),
                     alignment: Alignment.centerRight,
-                    child: Text('Forgot Password ?',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500)),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context)
+                          .pushNamed(AppRoutes.resetPassword),
+                      child: Text('Forgot Password ?',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500)),
+                    ),
                   ),
                   _createAccountLabel(),
                 ],

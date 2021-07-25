@@ -1,3 +1,4 @@
+
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,14 +19,22 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   List<dynamic> operationRoutes;
-  bool _loading = true;
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
   void fetchData() async {
     try {
-      operationRoutes = await BookingServices.getroutes();
+      List _operationRoutes = await BookingServices.getroutes();
+      setState(() {
+        operationRoutes = _operationRoutes;
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-         "an error occured",
+          "an error occured",
           style: TextStyle(color: Theme.of(context).errorColor),
         ),
         duration: Duration(seconds: 10),
@@ -33,18 +42,10 @@ class _BookingState extends State<Booking> {
           label: "retry",
           onPressed: () async {
             fetchData();
-           _loading =true;
           },
         ),
       ));
     }
-    _loading = false;
-  }
-
-  @override
-  void initState() {
-    fetchData();
-    super.initState();
   }
 
   @override
@@ -122,7 +123,7 @@ class _BookingState extends State<Booking> {
             Stack(
               children: [
                 Positioned(
-                  child: Hero(tag: "page_paint", child: CurvePaint()),
+                  child: CurvePaint(),
                   top: 0,
                   left: 0,
                 ),
@@ -168,11 +169,8 @@ class _BookingState extends State<Booking> {
                 )
               ],
             ),
-            _loading
-                ? CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.black87),
-                  )
-                : Expanded(
+            operationRoutes != null
+                ? Expanded(
                     child: GridView.count(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
                       crossAxisCount: 2,
@@ -187,7 +185,10 @@ class _BookingState extends State<Booking> {
                             .map((item) => _card(TravelRoute.fromJson(item)))
                       ],
                     ),
-                  ),
+                  )
+                : CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Colors.black87),
+                  )
           ],
         ),
       ),

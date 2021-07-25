@@ -15,6 +15,8 @@ class UserAuthentication {
           await Dio().post("${ipAddress}api/auth/login/", data: data);
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.setString("authToken", response.data['token']);
+    } on SocketException catch (e) {
+      throw SocketException(e.message);
     } on DioError catch (e) {
       throw DioError(requestOptions: null, response: e.response ?? e.message);
     }
@@ -31,7 +33,9 @@ class UserAuthentication {
     } on SocketException catch (e) {
       throw SocketException(e.message.toString());
     } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response.data["errors"] ?? e.message);
+      throw DioError(
+          requestOptions: null,
+          response: e.response.data["errors"] ?? e.message);
     }
   }
 
@@ -51,6 +55,28 @@ class UserAuthentication {
   }
 
   static Future<void> uploadProfileIMage() async {}
+  static Future<Map<String, dynamic>> resetPassword({Map data}) async {
+    try {
+      final res = await Dio().post("${ipAddress}api/auth/reset/", data: data);
+      return res.data as Map;
+    } on SocketException catch (e) {
+      throw SocketException(e.message.toString());
+    } on DioError catch (e) {
+      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    }
+  }
+
+  static Future<Map<String, dynamic>> setNewPassword({Map data}) async {
+    try {
+      final res = await Dio().put("${ipAddress}api/auth/reset/", data: data);
+      return res.data as Map;
+    } on SocketException catch (e) {
+      throw SocketException(e.message.toString());
+    } on DioError catch (e) {
+      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    }
+  }
+
   static Future<User> getUserProfile() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String _userData = _prefs.get("user");
