@@ -12,14 +12,13 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({Key key, this.user}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState(user);
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   User user;
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
-  _ProfilePageState(this.user);
   GlobalKey<FormState> profileForm = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _firstNameController = TextEditingController();
@@ -28,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
+    user = widget.user;
     _emailController.text = user.email;
     _firstNameController.text = user.firstName;
     _lastNameController.text = user.lastName;
@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _sumitForm() async {
+    //update user profile
     if (profileForm.currentState.validate()) {
       setState(() {
         _status = true;
@@ -51,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
           "email": _emailController.text,
           "first_name": _firstNameController.text,
           "last_name": _lastNameController.text,
-          "phone_number": "+254${_phoneNumberController.text}",
+          "phone_number": "+254${(_phoneNumberController.text).substring(1)}",
         }));
         setState(() {
           user = _updatedUser;
@@ -85,10 +86,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (user.userId == null) {
-      return SizedBox();
-    }
-
     return Form(
       key: profileForm,
       child: Padding(

@@ -1,10 +1,9 @@
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/palette.dart';
-import 'package:taxi_app/screens/makeBooking.dart';
 import 'package:taxi_app/serializers.dart';
 import 'package:taxi_app/services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
@@ -19,6 +18,8 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   List<dynamic> operationRoutes;
+  //for filtering in search
+  List<dynamic> operationRoutesAll;
   @override
   void initState() {
     fetchData();
@@ -30,93 +31,94 @@ class _BookingState extends State<Booking> {
       List _operationRoutes = await BookingServices.getroutes();
       setState(() {
         operationRoutes = _operationRoutes;
+        operationRoutesAll = _operationRoutes;
       });
-    } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    } on Failure catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "an error occured",
-          style: TextStyle(color: Theme.of(context).errorColor),
-        ),
-        duration: Duration(seconds: 10),
-        action: SnackBarAction(
-          label: "retry",
-          onPressed: () async {
-            fetchData();
-          },
-        ),
+        content: Text(e.toString(),
+            style: TextStyle(color: Theme.of(context).errorColor)),
+        duration: Duration(seconds: 10000),
+        action: SnackBarAction(label: "retry", onPressed: fetchData),
       ));
     }
+  }
+
+  void filterData(String text) {
+    text = text.toLowerCase();
+    Iterable<dynamic> _routesFiltered = operationRoutesAll.where((item) {
+      return (item["origin"]["name"].toLowerCase().contains(text) ||
+          item["destination"]["name"].toLowerCase().contains(text));
+    });
+    setState(() {
+      operationRoutes = _routesFiltered.toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     Widget _card(TravelRoute _route) {
-      return Container(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-        alignment: Alignment.bottomCenter,
-        margin: EdgeInsets.only(top: 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "${_route.origin} - ${_route.destination}",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Palette.dark[2],
-                  fontSize: 14),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Text(
-              "Ksh ${_route.cost}",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Palette.dark[2],
-                  fontSize: 15),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            actionButton(context, "Book Now", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BookConfirm()),
-              );
-            }, padding: 5)
-          ],
-        ),
-        decoration: BoxDecoration(
-          color: Palette.backgroundColor,
-          borderRadius: BorderRadius.circular(5.0),
+      return Card(
+        elevation: 3,
+        shadowColor: Colors.grey[200],
+        child: Container(
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+          alignment: Alignment.bottomCenter,
+          margin: EdgeInsets.only(top: 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("${_route.origin} - ${_route.destination}",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Palette.dark[2],
+                      fontSize: 14)),
+              Text(
+                "Ksh ${_route.cost}",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Palette.dark[2],
+                    fontSize: 15),
+              ),
+              actionButton(context, "Book Now", () {
+                Navigator.pushNamed(context, AppRoutes.makeBooking,
+                    arguments: _route.origin);
+              }, padding: 5)
+            ],
+          ),
+          decoration: BoxDecoration(
+            color: Palette.backgroundColor,
+            borderRadius: BorderRadius.circular(5.0),
+          ),
         ),
       );
     }
 
+    Widget curvedNavigationBar = CurvedNavigationBar(
+        height: 50,
+        index: 1,
+        backgroundColor: Palette.accentColor,
+        items: <Widget>[
+          Icon(
+            Icons.person,
+            size: 30,
+            color: Palette.dark[2],
+          ),
+          Icon(Icons.home, size: 30, color: Palette.dark[2]),
+          Icon(Icons.phone, size: 30, color: Palette.dark[2]),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.of(context).pushNamed(AppRoutes.account);
+          } else if (index == 2) {
+            Navigator.of(context).pushNamed(AppRoutes.support);
+          } else {
+            Navigator.of(context).pushNamed(AppRoutes.home);
+          }
+        });
     return Scaffold(
-      bottomNavigationBar: CurvedNavigationBar(
-          height: 50,
-          index: 1,
-          backgroundColor: Palette.accentColor,
-          items: <Widget>[
-            Icon(
-              Icons.person,
-              size: 30,
-              color: Palette.dark[2],
-            ),
-            Icon(Icons.home, size: 30, color: Palette.dark[2]),
-            Icon(Icons.phone, size: 30, color: Palette.dark[2]),
-          ],
-          onTap: (index) {
-            if (index == 0) {
-              Navigator.of(context).pushNamed(AppRoutes.account);
-            } else if (index == 2) {
-              Navigator.of(context).pushNamed(AppRoutes.support);
-            } else {
-              Navigator.of(context).pushNamed(AppRoutes.home);
-            }
-          }),
+      bottomNavigationBar: curvedNavigationBar,
       body: Container(
         child: Column(
           children: [
@@ -130,40 +132,7 @@ class _BookingState extends State<Booking> {
                 Column(
                   children: <Widget>[
                     SizedBox(height: height * 0.1),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Material(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              elevation: 10,
-                              shadowColor: Colors.grey[300],
-                              child: TextField(
-                                textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    fillColor: Color(0xffffff),
-                                    hintText: "Search",
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(10, 0, 10, 0)),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.search,
-                                color: Palette.accentColor,
-                                size: 40,
-                              ))
-                        ],
-                      ),
-                    ),
+                    _searchField(),
                     SizedBox(height: height * 0.08),
                   ],
                 )
@@ -182,7 +151,12 @@ class _BookingState extends State<Booking> {
                       children: [
                         // ignore: sdk_version_ui_as_code
                         ...operationRoutes
-                            .map((item) => _card(TravelRoute.fromJson(item)))
+                            .map((item) => _card(TravelRoute.fromJson(item))),
+                            operationRoutesAll.isEmpty
+                      ? Text("No trip available")
+                      : SizedBox(
+                          height: 0,
+                        )
                       ],
                     ),
                   )
@@ -191,6 +165,43 @@ class _BookingState extends State<Booking> {
                   )
           ],
         ),
+      ),
+    );
+  }
+
+  Container _searchField() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              elevation: 10,
+              shadowColor: Colors.grey[300],
+              child: TextField(
+                onChanged: filterData,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    fillColor: Color(0xffffff),
+                    hintText: "Search",
+                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
+              ),
+            ),
+          ),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.search,
+                color: Palette.accentColor,
+                size: 40,
+              ))
+        ],
       ),
     );
   }

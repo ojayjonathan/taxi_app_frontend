@@ -1,8 +1,9 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/screens/auth/auth_services.dart';
+import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -10,10 +11,6 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/palette.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -22,36 +19,42 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
+  bool _submiting = false;
   void validateForm() async {
-    if (formkey.currentState.validate()) {
+    
+    if (formkey.currentState.validate() && !_submiting) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        'Submiting please wait...',
-        style: TextStyle(color: Palette.successColor),
-      )));
+        content: Text(
+          'Submiting please wait...',
+          style: TextStyle(color: Palette.successColor),
+        ),
+        duration: Duration(milliseconds: 10000),
+      ));
       try {
         await UserAuthentication.loginUser(
             {"email": _email.text, "password": _password.text});
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          "Login was sucessfull",
-          style: TextStyle(color: Palette.successColor),
-        )));
-        Navigator.of(context).popAndPushNamed(AppRoutes.home);
-      } on SocketException {
+            content: Text("Login was sucessfull",
+                style: TextStyle(color: Palette.successColor))));
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      } on Failure catch (e) {
+        _submiting = false;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            "Connection error ",
+            e.message,
             style: TextStyle(color: Theme.of(context).errorColor),
           ),
+          duration: Duration(seconds: 60),
         ));
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          e.response.toString(),
-          style: TextStyle(color: Theme.of(context).errorColor),
-        )));
       }
     }
   }
@@ -63,23 +66,17 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
-            'Don\'t have an account ?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            width: 10,
-          ),
+          Text('Don\'t have an account ?',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          SizedBox(width: 10),
           InkWell(
             onTap: () =>
                 Navigator.of(context).popAndPushNamed(AppRoutes.signup),
-            child: Text(
-              'Register',
-              style: TextStyle(
-                  color: Palette.primary3Color,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
-            ),
+            child: Text('Register',
+                style: TextStyle(
+                    color: Palette.primary3Color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -110,20 +107,19 @@ class _LoginPageState extends State<LoginPage> {
       height: height,
       child: Stack(
         children: <Widget>[
-          Positioned(top: 0, right: 0, child: BezierContainer()),
           Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _title(),
-                  SizedBox(height: 10),
-                  Form(
-                    key: formkey,
-                    child: Column(
-                      children: <Widget>[
+            child: SafeArea(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _title(),
+                    SizedBox(height: 10),
+                    Form(
+                      key: formkey,
+                      child: Column(children: <Widget>[
                         entryField("Email",
                             controller: _email,
                             icon: Icons.email,
@@ -139,41 +135,33 @@ class _LoginPageState extends State<LoginPage> {
                             hintText: "password",
                             validator: passwordValidator,
                             isPassword: true),
-                      ],
+                      ]),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  submitButton(context, validateForm, "Login"),
-                  Container(
-                    padding: EdgeInsets.only(top: 8),
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(AppRoutes.resetPassword),
-                      child: Text('Forgot Password ?',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
+                    SizedBox(height: 10),
+                    submitButton(context, validateForm, "Login"),
+                    Container(
+                      padding: EdgeInsets.only(top: 8),
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () => Navigator.of(context)
+                            .pushNamed(AppRoutes.resetPassword),
+                        child: Text('Forgot Password ?',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500)),
+                      ),
                     ),
-                  ),
-                  _createAccountLabel(),
-                ],
+                    _createAccountLabel(),
+                  ],
+                ),
               ),
             ),
           ),
+          Positioned(
+              top: 0,
+              right: 0,
+              child: Hero(tag: "page_paint", child: BezierContainer())),
         ],
       ),
     ));
-  }
-}
-
-String passwordValidator(value) {
-  if (value.isEmpty) {
-    return "Required";
-  } else if (value.length < 6) {
-    return "Should be atleast 6 characters";
-  } else if (value.length > 15) {
-    return "Should be atmost 15 characters";
-  } else {
-    return null;
   }
 }

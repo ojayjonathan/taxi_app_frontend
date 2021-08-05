@@ -8,7 +8,8 @@ class Palette {
   static final Color textColor = Color(0xff495057);
   static final Color textColor2 = Color(0xff495057);
   static final Color accentColor = Color(0xffFF7D49);
-  static final Color backgroundColor = Color(0xffF1F3FA);
+  // static final Color backgroundColor = Color(0xffF1F3FA);
+  static final Color backgroundColor = Color(0xffFFFFFF);
   static final Color lighBlueColor = Color(0xffCDDAFD);
   static final Color successColor = Color(0xff00A95E);
   static final Color muted = Color(0xff70757a);

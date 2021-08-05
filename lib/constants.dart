@@ -1,4 +1,5 @@
-String ipAddress = "http://192.168.43.60:8000/";
+String ipAddress = "http://147.182.225.253/";
+int timeout = 100000;
 
 class AppRoutes {
   static const splash = "/";
@@ -6,7 +7,7 @@ class AppRoutes {
   static const account = "/account";
   static const welcome = "/welcome";
   static const book = "/book";
-  static const profile = "profile";
+  static const profile = "/profile";
   static const resetPassword = "/reset-password";
   static const feedback = "/feedback";
   static const introduction = "/introduction";
@@ -18,4 +19,6 @@ class AppRoutes {
   static const support = "/support-page/";
   static const signup = "/signup";
   static const makeBooking = "/book-now";
+  static const connectionError = "/connectionError";
+  static const terms = "/terms";
 }

@@ -1,24 +1,25 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/serializers.dart';
 
-Duration reqTimeout = Duration(microseconds: 10000);
-
 class UserAuthentication {
+  static Dio dio =
+      Dio(BaseOptions(connectTimeout: timeout, receiveTimeout: timeout));
   static Future<void> loginUser(Map data) async {
     try {
-      final response =
-          await Dio().post("${ipAddress}api/auth/login/", data: data);
+      final response = await dio.post(
+        "${ipAddress}api/auth/login/",
+        data: data,
+        options: Options(sendTimeout: timeout),
+      );
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.setString("authToken", response.data['token']);
-    } on SocketException catch (e) {
-      throw SocketException(e.message);
-    } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    } catch (e) {
+      throw getException(e);
     }
   }
 
@@ -29,13 +30,10 @@ class UserAuthentication {
 
   static Future<void> registerUser(String data) async {
     try {
-      await Dio().post("${ipAddress}api/auth/customer/register/", data: data);
-    } on SocketException catch (e) {
-      throw SocketException(e.message.toString());
-    } on DioError catch (e) {
-      throw DioError(
-          requestOptions: null,
-          response: e.response.data["errors"] ?? e.message);
+      await dio.post("${ipAddress}api/auth/customer/register/",
+          data: data, options: Options(sendTimeout: timeout));
+    } catch (e) {
+      throw getException(e);
     }
   }
 
@@ -43,37 +41,36 @@ class UserAuthentication {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     try {
       String authToken = _prefs.getString("authToken");
-      var _profile = await Dio().put("${ipAddress}api/customer/profile/",
-          options: Options(headers: {'Authorization': 'Token $authToken'}));
+      var _profile = await dio.put("${ipAddress}api/customer/profile/",
+          options: Options(
+              headers: {'Authorization': 'Token $authToken'},
+              sendTimeout: timeout),
+          data: data);
+      print(_profile.data);
       _prefs.setString("user", jsonEncode(_profile.data));
       return User.fromJson(_profile.data as Map);
-    } on SocketException catch (e) {
-      throw SocketException(e.message.toString());
-    } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    } catch (e) {
+      throw getException(e);
     }
   }
 
   static Future<void> uploadProfileIMage() async {}
   static Future<Map<String, dynamic>> resetPassword({Map data}) async {
     try {
-      final res = await Dio().post("${ipAddress}api/auth/reset/", data: data);
+      final res = await dio.post("${ipAddress}api/auth/reset/", data: data);
       return res.data as Map;
-    } on SocketException catch (e) {
-      throw SocketException(e.message.toString());
-    } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    } catch (e) {
+      throw getException(e);
     }
   }
 
   static Future<Map<String, dynamic>> setNewPassword({Map data}) async {
     try {
-      final res = await Dio().put("${ipAddress}api/auth/reset/", data: data);
+      final res = await dio.put("${ipAddress}api/auth/reset/",
+          data: data, options: Options(sendTimeout: timeout));
       return res.data as Map;
-    } on SocketException catch (e) {
-      throw SocketException(e.message.toString());
-    } on DioError catch (e) {
-      throw DioError(requestOptions: null, response: e.response ?? e.message);
+    } catch (e) {
+      throw getException(e);
     }
   }
 
@@ -85,14 +82,14 @@ class UserAuthentication {
     } else {
       try {
         String authToken = _prefs.getString("authToken");
-        var profile = await Dio().get("${ipAddress}api/customer/profile/",
-            options: Options(headers: {'Authorization': 'Token $authToken'}));
+        var profile = await dio.get("${ipAddress}api/customer/profile/",
+            options: Options(
+                headers: {'Authorization': 'Token $authToken'},
+                sendTimeout: timeout));
         _prefs.setString("user", jsonEncode(profile.data));
         return User.fromJson(profile.data as Map);
-      } on SocketException catch (e) {
-        throw SocketException(e.message.toString());
-      } on DioError catch (e) {
-        throw DioError(requestOptions: null, response: e.response ?? e.message);
+      } catch (e) {
+        throw getException(e);
       }
     }
   }

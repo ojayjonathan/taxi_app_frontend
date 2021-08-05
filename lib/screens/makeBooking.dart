@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/serializers.dart';
 import 'package:taxi_app/services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 
 class BookConfirm extends StatefulWidget {
-  const BookConfirm({Key key}) : super(key: key);
+  final selectedRoute;
+  const BookConfirm({Key key, this.selectedRoute}) : super(key: key);
   @override
   _BookConfirmState createState() => _BookConfirmState();
 }
@@ -36,17 +38,13 @@ class _BookConfirmState extends State<BookConfirm> {
 
   void _init() async {
     try {
-      List _apiData = await BookingServices.getTrips();
+      List _apiData = await BookingServices.getTrips(q: widget.selectedRoute);
       setState(() {
         _availableTrip = _apiData;
       });
-    } catch (e) {
-      _showSnackBar("An error occured ...", Theme.of(context).errorColor,
-          action: SnackBarAction(
-              label: "retry",
-              onPressed: () async {
-                _init();
-              }));
+    } on Failure catch (e) {
+      _showSnackBar(e.message, Theme.of(context).errorColor,
+          action: SnackBarAction(label: "retry", onPressed: _init));
     }
   }
 
@@ -150,18 +148,16 @@ class _BookConfirmState extends State<BookConfirm> {
           style: TextStyle(color: Palette.successColor),
         )));
         try {
-          final res = await BookingServices.makebooking(
+          await BookingServices.makebooking(
               _selectedTrip.id, int.parse(_numSeatsController.text));
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-            "Booking confirmed",
-            style: TextStyle(color: Palette.successColor),
-          )));
+              content: Text("Your booking has been confirmed",
+                  style: TextStyle(color: Palette.successColor))));
           Navigator.of(context).popAndPushNamed(AppRoutes.bookHistory);
-        } catch (e) {
+        } on Failure catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-            e.response.toString(),
+            e.toString(),
             style: TextStyle(color: Theme.of(context).errorColor),
           )));
         }
@@ -171,10 +167,11 @@ class _BookConfirmState extends State<BookConfirm> {
     return Container(
       height: 300,
       child: AlertDialog(
-        title: Text('Confirm bookig'),
+        title: Text('Confirm booking'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text("Vehicle capacity: ${_selectedTrip.vehicle.capacity} seats"),
             Form(
                 key: _form,
                 child: TextFormField(

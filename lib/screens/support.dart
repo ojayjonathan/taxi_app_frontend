@@ -10,29 +10,14 @@ class ContactUs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar:  AppBar(
-      //   centerTitle: true,
-      //   title: Title(
-      //     child: Text(
-      //       "Support",
-      //       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-      //     ),
-      //     color: Colors.white,
-      //   ),
-       
-      //   leading: IconButton(
-      //     icon: Icon(
-      //       Icons.arrow_back_ios,
-      //       color: Colors.white,
-      //     ),
-      //     onPressed: () => Navigator.of(context).pop(),
-      //   ),
-      // ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              Positioned(top: 0, right: 0, child: Hero(tag:"page_paint",child: BezierContainer())),
+              Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Hero(tag: "page_paint", child: BezierContainer())),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +31,8 @@ class ContactUs extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 18)),
                   ),
-                  Card(margin: EdgeInsets.symmetric(horizontal: 20),
+                  Card(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
                     elevation: 2,
                     shadowColor: Colors.grey[250],
                     child: Padding(
@@ -62,7 +48,7 @@ class ContactUs extends StatelessWidget {
                               color: Palette.accentColor,
                             ),
                           ),
-                          Text("+254742446941")
+                          SelectableText("0716539104")
                         ],
                       ),
                     ),

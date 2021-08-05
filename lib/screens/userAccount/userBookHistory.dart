@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/serializers.dart';
 import 'package:taxi_app/services.dart';
@@ -16,16 +16,11 @@ class _BookHistoryState extends State<BookHistory> {
   Map<String, Color> scaffoldData;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchData();
   }
 
-  void _showSnackBar(
-    String message,
-    Color color, {
-    SnackBarAction action,
-  }) {
+  void _showSnackBar(String message, Color color, {SnackBarAction action}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           message,
@@ -40,17 +35,13 @@ class _BookHistoryState extends State<BookHistory> {
       setState(() {
         _bookings = _apiData;
       });
-    } on SocketException catch (e) {
-      _showSnackBar(
-        e.message.toString(),
-        Theme.of(context).errorColor,
-        action: SnackBarAction(
-          label: "retry",
-          onPressed: () async {
-            fetchData();
-          },
-        ),
-      );
+    } on Failure catch (e) {
+      _showSnackBar(e.message, Theme.of(context).errorColor,
+          action: SnackBarAction(
+              label: "retry",
+              onPressed: () async {
+                fetchData();
+              }));
     } on DioError catch (e) {
       _showSnackBar(e.response.toString(), Theme.of(context).errorColor);
     }
@@ -64,14 +55,11 @@ class _BookHistoryState extends State<BookHistory> {
         "Book has been canceled",
         Palette.successColor,
       );
-    } on SocketException catch (e) {
-      _showSnackBar(e.message.toString(), Theme.of(context).errorColor);
-    } on DioError catch (e) {
-      _showSnackBar(e.response.toString(), Theme.of(context).errorColor);
+    } on Failure catch (e) {
+      _showSnackBar(e.message, Theme.of(context).errorColor);
     }
   }
 
-  final Map _statusMap = {"P": "Pending", "C": "Canceled", "F": "Fullfiled"};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,8 +103,44 @@ class _BookHistoryState extends State<BookHistory> {
     );
   }
 
+  Widget _tripDetails(CustomerTripBooking _book) {
+    return AlertDialog(
+      title: Text('Trip Details'),
+      content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Vehicle Capacity: ${_book.trip.vehicle.capacity} seats"),
+            SizedBox(height: 5),
+            Text("Vehicle Color: ${_book.trip.vehicle.color}"),
+            SizedBox(height: 5),
+            Text("Vehicle Reg No: ${_book.trip.vehicle.regNumber}"),
+            SizedBox(height: 5),
+            Text("Driver Contact: ${_book.trip.driver.phoneNumber}"),
+            _book.trip.departure != null
+                ? Text("Departure: ${_book.trip.departure}")
+                : Container()
+          ]),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('CLOSE', style: TextStyle(color: Palette.accentColor)),
+        ),
+      ],
+    );
+  }
+
+  TextStyle textStyle = TextStyle(
+      color: Palette.dark[2], fontWeight: FontWeight.w500, fontSize: 16);
+
   Widget _bookingCard(CustomerTripBooking _book) {
     String _statusKey = _book.status;
+    final Map _statusMap = {"A": "Active", "C": "Canceled", "F": "Fullfiled"};
+    Map<String, Color> colors = {
+      "F": Palette.accentColor,
+      "A": Colors.amberAccent,
+      "C": Theme.of(context).errorColor
+    };
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8),
       elevation: 3,
@@ -132,29 +156,38 @@ class _BookHistoryState extends State<BookHistory> {
               children: [
                 Text(
                   "${_book.trip.route.origin} - ${_book.trip.route.destination}",
-                  style: TextStyle(
-                      color: Palette.dark[2],
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
+                  style: textStyle,
                 ),
                 SizedBox(
                   height: 5,
                 ),
-                Text(
-                  "Status: ${_statusMap[_statusKey]}",
-                  style: TextStyle(
-                      color: Palette.dark[3], fontWeight: FontWeight.w500),
-                )
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                    text: "Status: ",
+                    style: textStyle,
+                  ),
+                  TextSpan(
+                    text: "${_statusMap[_statusKey]}",
+                    style: TextStyle(
+                        color: colors[_statusKey], fontWeight: FontWeight.w500),
+                  )
+                ]))
               ],
             ),
-            _statusKey == "P"
+            TextButton(
+                onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (context) => _tripDetails(_book)),
+                child: Text("Details")),
+            _statusKey == "A"
                 ? TextButton(
                     onPressed: () => _cancelBooking(_book.id),
                     child: Text("Cancel"))
                 : TextButton(
                     child: Text("Feedback"),
                     onPressed: () =>
-                        Navigator.of(context).pushNamed(AppRoutes.feedback)),
+                        Navigator.of(context).pushNamed(AppRoutes.feedback))
           ],
         ),
       ),

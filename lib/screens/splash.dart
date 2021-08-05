@@ -12,7 +12,7 @@ class SplashScreen extends StatefulWidget {
 class SplashScreenState extends State<SplashScreen>
     with AfterLayoutMixin<SplashScreen> {
   @override
-  void afterFirstLayout(BuildContext context) => checkFirstSeen();
+  void afterFirstLayout(BuildContext context) => initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,8 @@ class SplashScreenState extends State<SplashScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            //TODO:replace logo here
             Text(
-              "Matndogo".toUpperCase(),
+              "Mat'ndogo".toUpperCase(),
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -43,19 +42,19 @@ class SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Future checkFirstSeen() async {
+  Future initializeApp() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String _authToken = _prefs.get("authToken");
     bool _seen = _prefs.getBool("seen") ?? false;
+    _prefs.remove("travelRoutes");
+    //inialize app data
     if (_seen) {
       if (_authToken == null) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
       } else {
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       }
-    }
-
-    else {
+    } else {
       _prefs.setBool('seen', true);
       Navigator.of(context).pushReplacementNamed(AppRoutes.introduction);
     }

@@ -5,12 +5,7 @@ import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import 'package:taxi_app/widgets/paints/welcomePagePaint.dart';
 
-
 class WelcomePage extends StatefulWidget {
-  WelcomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _WelcomePageState createState() => _WelcomePageState();
 }
@@ -47,7 +42,7 @@ class _WelcomePageState extends State<WelcomePage> {
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
         Text(
-          "Matndogo",
+          "Mat'ndogo",
           style: TextStyle(
               color: Palette.dark[0],
               fontWeight: FontWeight.w500,
@@ -65,58 +60,56 @@ class _WelcomePageState extends State<WelcomePage> {
       body: SingleChildScrollView(
         child: Container(
           height: height,
-          child: SafeArea(
-            child: Column(
-              children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Container(height: height * 0.6, child: WelcomePagePaint()),
-                    Container(
-                      height: height * 0.6,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            child: _title(),
-                            width: width * 0.75,
-                            padding: EdgeInsets.only(top: 50),
-                          ),
-                          Align(
-                              alignment: Alignment.bottomCenter,
-                              child: SvgPicture.asset(
-                                "assets/graphics/taxi.svg",
-                                width: width * 0.75,
-                              ))
-                        ],
-                      ),
+          child: Column(
+            children: <Widget>[
+              Stack(
+                children: <Widget>[
+                  Container(height: height * 0.6, child: WelcomePagePaint()),
+                  Container(
+                    height: height * 0.6,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          child: _title(),
+                          width: width * 0.75,
+                          padding: EdgeInsets.only(top: 50),
+                        ),
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SvgPicture.asset(
+                              "assets/graphics/taxi.svg",
+                              width: width * 0.75,
+                            ))
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: submitButton(
-                      context,
-                      () => Navigator.of(context).pushNamed(AppRoutes.login),
-                      "Login",
-                      fontSize: 18,
-                      borderRadius: 999),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: _signUpButton(),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                child: submitButton(
+                    context,
+                    () => Navigator.of(context).pushNamed(AppRoutes.login),
+                    "Login",
+                    fontSize: 18,
+                    borderRadius: 999),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                child: _signUpButton(),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
           ),
         ),
       ),

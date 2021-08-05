@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/screens/auth/auth_services.dart';
 import 'package:taxi_app/screens/userAccount/profilePage.dart';
@@ -20,24 +21,20 @@ class MapScreenState extends State<AccountPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUser();
   }
 
   void getUser() async {
-    // ignore: invalid_return_type_for_catch_error
     try {
       User _user = await UserAuthentication.getUserProfile();
       setState(() {
         user = _user;
       });
-    } catch (e) {
+    } on Failure catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.response.toString(),
-        style: TextStyle(color: Theme.of(context).errorColor),
-      )));
+          content: Text(e.message,
+              style: TextStyle(color: Theme.of(context).errorColor))));
     }
   }
 
@@ -50,60 +47,11 @@ class MapScreenState extends State<AccountPage>
       body: Container(
         child: Stack(
           children: [
-            Positioned(
-                top: 0,
-                right: 0,
-                child: Hero(tag: "page_paint", child: BezierContainer())),
             ListView(
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    Container(
-                      height: 180.0,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 30.0),
-                            child:
-                                Stack(fit: StackFit.loose, children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      width: 100.0,
-                                      height: 100.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          image: ExactAssetImage(
-                                              'assets/profile.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )),
-                                ],
-                              ),
-                              Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 50.0, right: 80.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      CircleAvatar(
-                                        backgroundColor: Palette.accentColor,
-                                        radius: 20.0,
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                            ]),
-                          )
-                        ],
-                      ),
-                    ),
+                    _profileImage(),
                     Container(
                         constraints: BoxConstraints(minHeight: height - 250),
                         width: MediaQuery.of(context).size.width,
@@ -150,6 +98,7 @@ class MapScreenState extends State<AccountPage>
                                         ),
                                         decoration: BoxDecoration(
                                           border: Border(
+            
                                               bottom: BorderSide(
                                             color: _tabIndex == 1
                                                 ? Palette.accentColor
@@ -172,15 +121,26 @@ class MapScreenState extends State<AccountPage>
                             ),
                             (_tabIndex == 0)
                                 ? _menu()
-                                : ProfilePage(
-                                    user: user,
-                                  ),
+                                : Container(
+                                    child: user == null
+                                        ? CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation(
+                                                Colors.black87),
+                                          )
+                                        : ProfilePage(
+                                            user: user,
+                                          ),
+                                  )
                           ],
                         ))
                   ],
                 ),
               ],
             ),
+            Positioned(
+                top: 0,
+                right: 0,
+                child: Hero(tag: "page_paint", child: BezierContainer())),
           ],
         ),
       ),
@@ -207,6 +167,64 @@ class MapScreenState extends State<AccountPage>
     );
   }
 
+  Container _profileImage() {
+    return Container(
+      height: 180.0,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 30.0),
+            child: Stack(fit: StackFit.loose, children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      width: 100.0,
+                      height: 100.0,
+                      alignment: Alignment.center,
+                      child: user != null
+                          ? Text(
+                              "${user.firstName[0]}${user.lastName[0]}"
+                                  .toUpperCase(),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
+                            )
+                          : Container(),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Palette.primary3Color
+                          //TODO:replace name initials with profile image
+
+                          // image: DecorationImage(
+                          //   image: ExactAssetImage(
+                          //       'assets/profile.png'),
+                          //   fit: BoxFit.cover,
+                          // ),
+                          )),
+                ],
+              ),
+              // Padding(
+              //     padding: EdgeInsets.only(top: 50.0, right: 80.0),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: <Widget>[
+              //         CircleAvatar(
+              //           backgroundColor: Palette.accentColor,
+              //           radius: 20.0,
+              //           child: Icon(
+              //             Icons.camera_alt,
+              //             color: Colors.white,
+              //           ),
+              //         )
+              //       ],
+              //     )),
+            ]),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _labelText(String label) {
     return Text(
       label,
@@ -215,12 +233,12 @@ class MapScreenState extends State<AccountPage>
   }
 
   Widget _menu() {
-    //TODO: add account navigation list
     Future<void> logout() async {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.remove("authToken");
       _prefs.remove("user");
-      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.welcome, (route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(AppRoutes.welcome, (route) => false);
     }
 
     return Column(

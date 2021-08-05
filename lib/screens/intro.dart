@@ -47,28 +47,28 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         PageViewModel(
           title: "Welcome",
           body:
-              "Instead of having to buy an entire share, invest any amount you want.",
+              "Commute in real-time with fun",
           image: _buldSvg("intro_p1.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Create Account",
+          title: "Get started",
           body:
-              "Instead of having to buy an entire share, invest any amount you want.",
+              "Create an  account to get started.",
           image: _buldSvg("taxi.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Make a booking",
           body:
-              "Download the Stockpile app and master the market with our mini-lesson.",
+              "Booking made easier with a click of a button .",
           image: _buldSvg("intro_p3_.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Get notified",
           body:
-              "Kids and teens can track their stocks 24/7 and place trades that you approve.",
+              " Track available services with our 24/7 updates through our socials.",
           image: _buldSvg("intro_p3.svg"),
           decoration: pageDecoration,
         ),

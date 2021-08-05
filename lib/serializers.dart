@@ -1,4 +1,5 @@
 class User {
+  //return user object from json
   final int userId;
   final String email;
   final String firstName;
@@ -19,7 +20,7 @@ class User {
         email: json["user"]["email"],
         lastName: json["user"]["last_name"],
         firstName: json["user"]["first_name"],
-        phoneNumber: (json["phone_number"] as String).replaceAll("+254", ""),
+        phoneNumber: (json["phone_number"] as String).replaceAll("+254", "0"),
         profileImage: json["profile_image"]);
   }
 }
@@ -42,8 +43,11 @@ class TripSerializer {
   final String status;
   final int availableSeats;
   final int id;
+  final User driver;
+  final Vehicle vehicle;
+
   TripSerializer(this.arrival, this.departure, this.status, this.availableSeats,
-      this.id, this.route);
+      this.id, this.route, this.driver, this.vehicle);
   factory TripSerializer.fromJson(Map<String, dynamic> json) {
     return TripSerializer(
         json["arrival"],
@@ -51,7 +55,9 @@ class TripSerializer {
         json["status"],
         json["available_seats"],
         json["id"],
-        TravelRoute.fromJson(json["route"]));
+        TravelRoute.fromJson(json["route"]),
+        User.fromJson(json["driver"]),
+        Vehicle.fromJson(json["vehicle"]));
   }
 }
 
@@ -72,3 +78,17 @@ class CustomerTripBooking {
         json["status"]);
   }
 }
+
+class Vehicle {
+  final String regNumber;
+  final String color;
+  final int capacity;
+
+  Vehicle(this.regNumber, this.color, this.capacity);
+  factory Vehicle.fromJson(Map<String, dynamic> json) {
+    return Vehicle(
+        json["vehicle_registration_number"], json["color"], json["seats"]);
+  }
+}
+
+

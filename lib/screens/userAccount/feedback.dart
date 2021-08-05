@@ -21,7 +21,7 @@ class _UserFeedBackState extends State<UserFeedBack> {
           style: TextStyle(color: Palette.successColor),
         )));
         Navigator.of(context).pop();
-      } catch (e) {
+      }  catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
           "An  error occured",

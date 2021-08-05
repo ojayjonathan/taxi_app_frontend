@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
+import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/screens/auth/auth_services.dart';
-import 'package:taxi_app/screens/auth/loginPage.dart';
+import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -10,9 +10,6 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/palette.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  ResetPasswordPage({Key key, this.title}) : super(key: key);
-  final String title;
-
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
@@ -25,6 +22,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   TextEditingController _newPassordController = TextEditingController();
   String uid;
   void resetPassword() async {
+    ScaffoldMessenger.of(context).clearSnackBars();
     if (formKey.currentState.validate()) {
       try {
         final res = await UserAuthentication.resetPassword(
@@ -36,10 +34,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           uid = res["uid"];
         });
         showDialog<void>(context: context, builder: (context) => _dialog());
-      } on DioError catch (e) {
+      } on Failure catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-          e.response.toString(),
+          e.message,
           style: TextStyle(color: Theme.of(context).errorColor),
         )));
       }
@@ -48,6 +46,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   void setNewPassword() async {
     if (_newPasswordKey.currentState.validate()) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+
       try {
         final res = await UserAuthentication.setNewPassword(data: {
           "new_password": _newPassordController.text,
@@ -58,12 +58,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             content: Text(res["message"],
                 style: TextStyle(color: Palette.successColor))));
         Navigator.of(context).pushNamed(AppRoutes.login);
-      } on DioError catch (e) {
+      } on Failure catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-          e.response.toString(),
+          e.message,
           style: TextStyle(color: Theme.of(context).errorColor),
-        )));
+        ),
+        duration: Duration(milliseconds: 10000),));
       }
     }
   }
@@ -94,23 +96,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
-        height: height,
         child: Stack(
           children: <Widget>[
-            Positioned(
-              top: 0,
-              right: 0,
-              child: BezierContainer(),
-            ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: height * .25),
+                  SizedBox(
+                    height: 50,
+                  ),
                   _title(),
                   SizedBox(
                     height: 20,
@@ -118,6 +115,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   Form(
                     key: formKey,
                     child: entryField("Email",
+                        icon: Icons.email,
                         validator: MultiValidator([
                           RequiredValidator(errorText: "Required"),
                           EmailValidator(
@@ -133,6 +131,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ),
             ),
             Positioned(top: 40, left: 0, child: backButton(context)),
+            Positioned(
+                top: 0,
+                right: 0,
+                child: Hero(tag: "page_paint", child: BezierContainer())),
           ],
         ),
       ),
@@ -141,7 +143,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   Widget _dialog() {
     return AlertDialog(
-      title: Text('Confirm bookig'),
+      title: Text('Set new password'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -159,6 +161,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     controller: _newPassordController,
                     decoration: InputDecoration(hintText: "New password"),
                     validator: passwordValidator,
+                    obscureText: true,
                   ),
                 ],
               ))

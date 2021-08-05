@@ -29,21 +29,18 @@ dependencies:
   dio: ^4.0.0
   shared_preferences: ^2.0.6
   introduction_screen: ^2.1.0
-  # flutter_svg: ^0.22.0
-
-
-
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  flutter_svg: ^0.22.0
+  dependencies:
+  firebase_messaging: ^10.0.4
   cupertino_icons: ^1.0.0
+  flutter_local_notifications: ^6.1.0
+  firebase_core: ^1.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   # flutter_native_splash: ^1.2.0   
-  flutter_launcher_icons: "^0.8.0"
+  # flutter_launcher_icons: "^0.8.0"
 
 flutter_icons:
   android: "launcher_icon"
@@ -82,6 +79,7 @@ flutter:
     - assets/graphics/lp.svg
     - assets/graphics/rp.svg
     - assets/launcher/bg.png
+    - assets/graphics/noConnectio.svg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

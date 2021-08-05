@@ -5,12 +5,13 @@ import 'package:taxi_app/screens/auth/resetPassword.dart';
 import 'package:taxi_app/screens/auth/signup.dart';
 import 'package:taxi_app/screens/book.dart';
 import 'package:taxi_app/screens/makeBooking.dart';
+import 'package:taxi_app/screens/noConnection.dart';
 import 'package:taxi_app/screens/userAccount/UserAccount.dart';
 import 'package:taxi_app/screens/intro.dart';
 import 'package:taxi_app/screens/splash.dart';
 import 'package:taxi_app/screens/support.dart';
+import 'package:taxi_app/screens/userAccount/terms.dart';
 import 'package:taxi_app/screens/welcomePage.dart';
-
 import 'screens/userAccount/feedback.dart';
 import 'screens/userAccount/userBookHistory.dart';
 
@@ -35,13 +36,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.welcome:
       return MaterialPageRoute(builder: (context) => WelcomePage());
     case AppRoutes.makeBooking:
-      return MaterialPageRoute(builder: (context) => BookConfirm());
+      final args = settings.arguments;
+      return MaterialPageRoute(
+          builder: (context) => BookConfirm(selectedRoute: args));
     case AppRoutes.support:
       return MaterialPageRoute(builder: (context) => ContactUs());
     case AppRoutes.introduction:
       return MaterialPageRoute(builder: (context) => OnBoardingPage());
-
-    //TODO: return page not found
+    case AppRoutes.connectionError:
+      return MaterialPageRoute(builder: (context) => NoConnection());
+    case AppRoutes.terms:
+      return MaterialPageRoute(builder: (context) => Terms());
     default:
       return MaterialPageRoute(builder: (context) => WelcomePage());
   }
