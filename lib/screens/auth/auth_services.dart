@@ -74,6 +74,21 @@ class UserAuthentication {
     }
   }
 
+  static Future<User> refreshUserProfile() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    try {
+      String authToken = _prefs.getString("authToken");
+      var profile = await dio.get("${ipAddress}api/customer/profile/",
+          options: Options(
+              headers: {'Authorization': 'Token $authToken'},
+              sendTimeout: timeout));
+      _prefs.setString("user", jsonEncode(profile.data));
+      return User.fromJson(profile.data as Map);
+    } catch (e) {
+      throw getException(e);
+    }
+  }
+
   static Future<User> getUserProfile() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     String _userData = _prefs.get("user");

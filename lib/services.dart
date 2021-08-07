@@ -12,7 +12,6 @@ class BookingServices {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     if (_prefs.getString("travelRoutes") == null) {
       try {
-        SharedPreferences _prefs = await SharedPreferences.getInstance();
         final response = await dio.get("${ipAddress}api/routes/",
             options: Options(sendTimeout: timeout));
         _prefs.setString("travelRoutes", jsonEncode(response.data));
@@ -22,6 +21,18 @@ class BookingServices {
       }
     }
     return jsonDecode(_prefs.getString("travelRoutes")) as List<dynamic>;
+  }
+
+  static Future<List<dynamic>> refreshroutes() async {
+    try {
+      final response = await dio.get("${ipAddress}api/routes/",
+          options: Options(sendTimeout: timeout));
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      _prefs.setString("travelRoutes", jsonEncode(response.data));
+      return response.data as List;
+    } on Failure catch (e) {
+      throw getException(e);
+    }
   }
 
   static Future<List<dynamic>> getTrips({String q: ""}) async {

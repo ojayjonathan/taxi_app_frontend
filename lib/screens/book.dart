@@ -44,6 +44,15 @@ class _BookingState extends State<Booking> {
     }
   }
 
+  Future<void> refreshData() async {
+    try {
+      List response = await BookingServices.refreshroutes();
+      operationRoutes = response;
+      operationRoutesAll = response;
+      setState(() {});
+    } catch (_) {}
+  }
+
   void filterData(String text) {
     text = text.toLowerCase();
     Iterable<dynamic> _routesFiltered = operationRoutesAll.where((item) {
@@ -140,24 +149,27 @@ class _BookingState extends State<Booking> {
             ),
             operationRoutes != null
                 ? Expanded(
-                    child: GridView.count(
-                      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                      childAspectRatio: 1.2,
-                      children: [
-                        // ignore: sdk_version_ui_as_code
-                        ...operationRoutes
-                            .map((item) => _card(TravelRoute.fromJson(item))),
-                            operationRoutesAll.isEmpty
-                      ? Text("No trip available")
-                      : SizedBox(
-                          height: 0,
-                        )
-                      ],
+                    child: RefreshIndicator(
+                      onRefresh: refreshData,
+                      child: GridView.count(
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        shrinkWrap: true,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        childAspectRatio: 1.2,
+                        children: [
+                          // ignore: sdk_version_ui_as_code
+                          ...operationRoutes
+                              .map((item) => _card(TravelRoute.fromJson(item))),
+                          operationRoutesAll.isEmpty
+                              ? Text("No trip available")
+                              : SizedBox(
+                                  height: 0,
+                                )
+                        ],
+                      ),
                     ),
                   )
                 : CircularProgressIndicator(

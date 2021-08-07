@@ -132,7 +132,9 @@ class _BookConfirmState extends State<BookConfirm> {
 
   Widget _dialog() {
     String _validator(String value) {
-      if (int.parse(value) > _selectedTrip.availableSeats) {}
+      if (int.parse(value) > _selectedTrip.availableSeats) {
+        return "You can book a maximun of ${_selectedTrip.availableSeats} seats";
+      }
       if (int.parse(value) < 0) {
         return "Provide valid number";
       } else {

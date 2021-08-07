@@ -38,6 +38,15 @@ class MapScreenState extends State<AccountPage>
     }
   }
 
+  Future<void> _refresh() async {
+    try {
+      User _user = await UserAuthentication.refreshUserProfile();
+      setState(() {
+        user = _user;
+      });
+    } catch (_) {}
+  }
+
   int _tabIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -47,95 +56,98 @@ class MapScreenState extends State<AccountPage>
       body: Container(
         child: Stack(
           children: [
-            ListView(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    _profileImage(),
-                    Container(
-                        constraints: BoxConstraints(minHeight: height - 250),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            color: Palette.lighBlueColor,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40),
-                                topRight: Radius.circular(40))),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _tabIndex = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                        padding: EdgeInsets.only(
-                                          bottom:
-                                              5, // Space between underline and text
-                                        ),
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                                bottom: BorderSide(
-                                          color: _tabIndex == 0
-                                              ? Palette.accentColor
-                                              : Colors.transparent,
-                                          width: 2.0, // Underline thickness
-                                        ))),
-                                        child: _labelText("Status")),
-                                  ),
-                                  InkWell(
-                                    child: Container(
-                                        padding: EdgeInsets.only(
-                                          bottom:
-                                              5, // Space between underline and text
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-            
-                                              bottom: BorderSide(
-                                            color: _tabIndex == 1
+            RefreshIndicator(
+              onRefresh: _refresh,
+              child: ListView(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      _profileImage(),
+                      Container(
+                          constraints: BoxConstraints(minHeight: height - 250),
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              color: Palette.lighBlueColor,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(40),
+                                  topRight: Radius.circular(40))),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _tabIndex = 0;
+                                        });
+                                      },
+                                      child: Container(
+                                          padding: EdgeInsets.only(
+                                            bottom:
+                                                5, // Space between underline and text
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                            color: _tabIndex == 0
                                                 ? Palette.accentColor
                                                 : Colors.transparent,
-                                            width: 2.0,
-                                          )),
-                                        ),
-                                        child: _labelText("Profile")),
-                                    onTap: () {
-                                      setState(() {
-                                        _tabIndex = 1;
-                                      });
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                            Divider(
-                              color: Colors.grey[500],
-                            ),
-                            (_tabIndex == 0)
-                                ? _menu()
-                                : Container(
-                                    child: user == null
-                                        ? CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation(
-                                                Colors.black87),
-                                          )
-                                        : ProfilePage(
-                                            user: user,
+                                            width: 2.0, // Underline thickness
+                                          ))),
+                                          child: _labelText("Status")),
+                                    ),
+                                    InkWell(
+                                      child: Container(
+                                          padding: EdgeInsets.only(
+                                            bottom:
+                                                5, // Space between underline and text
                                           ),
-                                  )
-                          ],
-                        ))
-                  ],
-                ),
-              ],
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                              color: _tabIndex == 1
+                                                  ? Palette.accentColor
+                                                  : Colors.transparent,
+                                              width: 2.0,
+                                            )),
+                                          ),
+                                          child: _labelText("Profile")),
+                                      onTap: () {
+                                        setState(() {
+                                          _tabIndex = 1;
+                                        });
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.grey[500],
+                              ),
+                              (_tabIndex == 0)
+                                  ? _menu()
+                                  : Container(
+                                      child: user == null
+                                          ? CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      Colors.black87),
+                                            )
+                                          : ProfilePage(
+                                              user: user,
+                                            ),
+                                    )
+                            ],
+                          ))
+                    ],
+                  ),
+                ],
+              ),
             ),
             Positioned(
                 top: 0,
@@ -187,8 +199,10 @@ class MapScreenState extends State<AccountPage>
                           ? Text(
                               "${user.firstName[0]}${user.lastName[0]}"
                                   .toUpperCase(),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18,fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold),
                             )
                           : Container(),
                       decoration: BoxDecoration(
