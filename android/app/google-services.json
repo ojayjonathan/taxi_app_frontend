@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "128018906321",
-    "project_id": "matndogo-7576d",
-    "storage_bucket": "matndogo-7576d.appspot.com"
+    "project_number": "190694508288",
+    "project_id": "matndogo-e8e87",
+    "storage_bucket": "matndogo-e8e87.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:128018906321:android:51c365840cd484ccbfd9f0",
+        "mobilesdk_app_id": "1:190694508288:android:ae780c8bf6641dff78d5e5",
         "android_client_info": {
-          "package_name": "com.example.taxi_app"
+          "package_name": "com.matndogo.taxi_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "128018906321-n46cuolhg1peh0j35h77365ibpl05csu.apps.googleusercontent.com",
+          "client_id": "190694508288-198l64b36k5vv0hfqsa6vccacp8eln2l.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDSK_yKpg2w4LpovD7ELp9iHl8R3a-sf2E"
+          "current_key": "AIzaSyAz5-ZXo6eWGI0SBjQb8aKmUtA78_suOUM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "128018906321-n46cuolhg1peh0j35h77365ibpl05csu.apps.googleusercontent.com",
+              "client_id": "190694508288-198l64b36k5vv0hfqsa6vccacp8eln2l.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

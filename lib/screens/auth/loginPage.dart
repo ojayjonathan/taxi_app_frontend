@@ -28,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _submiting = false;
   void validateForm() async {
-    
     if (formkey.currentState.validate() && !_submiting) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
@@ -129,12 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                               EmailValidator(
                                   errorText: 'Enter a valid email address')
                             ])),
-                        entryField("Password",
-                            controller: _password,
-                            icon: Icons.lock,
-                            hintText: "password",
-                            validator: passwordValidator,
-                            isPassword: true),
+                        PasswordField(_password)
                       ]),
                     ),
                     SizedBox(height: 10),

@@ -29,6 +29,8 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _phoneNumber = TextEditingController();
   String _registartionToken;
   bool _submiting = false;
+  bool isChecked = false;
+  String errorText = "";
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,12 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _sumitForm() async {
-    if (formKey.currentState.validate() && !_submiting) {
+    if (!isChecked) {
+      errorText = "Agree with terms and conditions.";
+    } else{
+      errorText = "";
+    } 
+    if (formKey.currentState.validate() && !_submiting && isChecked) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -70,6 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     }
     _submiting = false;
+    setState(() {});
   }
 
   @override
@@ -174,32 +182,43 @@ class _SignUpPageState extends State<SignUpPage> {
                               phoneEntryField("Phone number",
                                   validator: phoneValidator,
                                   controller: _phoneNumber),
-                              entryField("Password",
-                                  controller: _password,
-                                  validator: passwordValidator,
-                                  isPassword: true,
-                                  icon: Icons.lock,
-                                  hintText: "password")
+                              PasswordField(_password)
                             ],
                           )),
                       SizedBox(
                         height: 10,
                       ),
-                      InkWell(
-                        onTap: () => Navigator.of(context)
-                            .popAndPushNamed(AppRoutes.terms),
-                        child: Text('Accept terms and conditions',
-                            style: TextStyle(
-                                color: Palette.dark[3],
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600)),
+                      Row(
+                        children: [
+                          Checkbox(
+                            checkColor: Colors.white,
+                            value: isChecked,
+                            onChanged: (bool value) {
+                              setState(() {
+                                isChecked = value;
+                              });
+                            },
+                          ),
+                          InkWell(
+                              onTap: () => Navigator.of(context)
+                                  .popAndPushNamed(AppRoutes.terms),
+                              child: Text('Accept  ',
+                                  style: TextStyle(
+                                      color: Palette.dark[2],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600))),
+                          Text("terms and conditions to continue.")
+                        ],
                       ),
+                      Text(errorText,
+                          style:
+                              TextStyle(color: Theme.of(context).errorColor,fontSize: 10)),
                       SizedBox(
                         height: 10,
                       ),
                       submitButton(context, _sumitForm, "Register"),
                       _loginLabel(),
-                       SizedBox(
+                      SizedBox(
                         height: 10,
                       ),
                     ],

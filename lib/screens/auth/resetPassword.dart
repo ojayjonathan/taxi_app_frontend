@@ -20,6 +20,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _resetCodeController = TextEditingController();
   TextEditingController _newPassordController = TextEditingController();
+  bool hidePassword = true;
   String uid;
   void resetPassword() async {
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -59,13 +60,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 style: TextStyle(color: Palette.successColor))));
         Navigator.of(context).pushNamed(AppRoutes.login);
       } on Failure catch (e) {
-        print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          e.message,
-          style: TextStyle(color: Theme.of(context).errorColor),
-        ),
-        duration: Duration(milliseconds: 10000),));
+          content: Text(
+            e.message,
+            style: TextStyle(color: Theme.of(context).errorColor),
+          ),
+          duration: Duration(milliseconds: 10000),
+        ));
       }
     }
   }
@@ -115,6 +116,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   Form(
                     key: formKey,
                     child: entryField("Email",
+                        hintText: "johndoe@gmail.com",
                         icon: Icons.email,
                         validator: MultiValidator([
                           RequiredValidator(errorText: "Required"),
@@ -159,9 +161,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   TextFormField(
                     controller: _newPassordController,
-                    decoration: InputDecoration(hintText: "New password"),
+                    decoration: InputDecoration(
+                        hintText: "New password",
+                        suffix: InkWell(
+                            onTap: () {
+                              setState(() {
+                                hidePassword = !hidePassword;
+                              });
+                            },
+                            child: Icon(
+                                hidePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Palette.dark[2]))),
                     validator: passwordValidator,
-                    obscureText: true,
+                    obscureText: hidePassword,
                   ),
                 ],
               ))

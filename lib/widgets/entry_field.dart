@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/palette.dart';
+import 'package:taxi_app/utils/validators.dart';
 
 Widget entryField(
   String title, {
   Function validator,
-  bool isPassword = false,
   TextEditingController controller,
   IconData icon,
   String hintText,
@@ -25,7 +25,6 @@ Widget entryField(
           height: 10,
         ),
         TextFormField(
-          obscureText: isPassword,
           decoration: InputDecoration(
               border: InputBorder.none,
               fillColor: Color(0xfff3f3f4),
@@ -71,4 +70,59 @@ Widget phoneEntryField(String title,
       ],
     ),
   );
+}
+
+//password field
+class PasswordField extends StatefulWidget {
+  final TextEditingController controller;
+  
+  const PasswordField(this.controller);
+
+  @override
+  _PasswordFieldState createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool hidePassword = true;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "Password",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Palette.dark[2],
+                fontSize: 15),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          TextFormField(
+            obscureText: hidePassword,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              fillColor: Color(0xfff3f3f4),
+              filled: true,
+              prefixIcon: Icon(Icons.lock),
+              hintText: "password",
+              suffix: InkWell(
+                  onTap: () {
+                    setState(() {
+                      hidePassword = !hidePassword;
+                    });
+                  },
+                  child: Icon(
+                      hidePassword ? Icons.visibility : Icons.visibility_off,color: Palette.dark[2],)),
+            ),
+            validator: passwordValidator,
+            controller: widget.controller,
+          )
+        ],
+      ),
+    );
+  }
 }
