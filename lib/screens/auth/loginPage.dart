@@ -1,9 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/screens/auth/auth_services.dart';
-import 'package:taxi_app/utils/validators.dart';
+
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
@@ -19,11 +20,22 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
+  //will be used for push notification
+  String _registartionToken;
   @override
   void dispose() {
     _email.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      _registartionToken = value;
+    });
   }
 
   bool _submiting = false;
@@ -39,8 +51,11 @@ class _LoginPageState extends State<LoginPage> {
         duration: Duration(milliseconds: 10000),
       ));
       try {
-        await UserAuthentication.loginUser(
-            {"email": _email.text, "password": _password.text});
+        await UserAuthentication.loginUser({
+          "email": _email.text,
+          "password": _password.text,
+          "registration_id": _registartionToken
+        });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Login was sucessfull",
                 style: TextStyle(color: Palette.successColor))));
