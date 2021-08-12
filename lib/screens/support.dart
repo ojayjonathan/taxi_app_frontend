@@ -4,9 +4,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 // ignore: must_be_immutable
 class ContactUs extends StatelessWidget {
+   Future<void> _call(String url) async {
+ if (await canLaunch(url)) {
+   await launch(url);
+ } else {
+   
+ }
+
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,25 +39,28 @@ class ContactUs extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 18)),
                   ),
-                  Card(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    elevation: 2,
-                    shadowColor: Colors.grey[250],
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Icon(
-                              Icons.phone,
-                              size: 20,
-                              color: Palette.accentColor,
+                  InkWell(
+                    onTap: ()=>_call("tel:0716539104"),
+                    child: Card(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      elevation: 2,
+                      shadowColor: Colors.grey[250],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Icon(
+                                Icons.phone,
+                                size: 20,
+                                color: Palette.accentColor,
+                              ),
                             ),
-                          ),
-                          SelectableText("0716539104")
-                        ],
+                            SelectableText("0716539104")
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -71,7 +82,9 @@ class ContactUs extends StatelessWidget {
                               color: Palette.accentColor,
                             ),
                           ),
-                          Text("testaccount@gmail.com")
+                          InkWell(
+                            onTap: ()=>_call("mailto:matndogo254@gmail.com"),
+                            child: Text("matndogo254@gmail.com"))
                         ],
                       ),
                     ),
