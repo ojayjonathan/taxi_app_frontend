@@ -137,22 +137,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: <Widget>[
                     Flexible(
                       child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: "Enter First Name",
-                        ),
+                        decoration:
+                            InputDecoration(hintText: "Enter First Name"),
                         enabled: !_status,
-                        autofocus: !_status,
                         validator: RequiredValidator(errorText: "Required"),
                         controller: _firstNameController,
                       ),
                     ),
                     Flexible(
                       child: TextFormField(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: "Enter Last Name",
                         ),
                         enabled: !_status,
-                        autofocus: !_status,
                         controller: _lastNameController,
                         validator: RequiredValidator(errorText: "Required"),
                       ),

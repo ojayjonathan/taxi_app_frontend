@@ -7,7 +7,7 @@ import 'package:taxi_app/services.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 
 class BookConfirm extends StatefulWidget {
-  final selectedRoute;
+  final Map<String, dynamic> selectedRoute;
   const BookConfirm({Key key, this.selectedRoute}) : super(key: key);
   @override
   _BookConfirmState createState() => _BookConfirmState();

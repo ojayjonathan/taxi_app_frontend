@@ -91,8 +91,10 @@ class _BookingState extends State<Booking> {
                     fontSize: 15),
               ),
               actionButton(context, "Book Now", () {
-                Navigator.pushNamed(context, AppRoutes.makeBooking,
-                    arguments: _route.origin);
+                Navigator.pushNamed(context, AppRoutes.makeBooking, arguments: {
+                  "from": _route.origin,
+                  "to": _route.destination
+                });
               }, padding: 5)
             ],
           ),
@@ -163,8 +165,8 @@ class _BookingState extends State<Booking> {
                           // ignore: sdk_version_ui_as_code
                           ...operationRoutes
                               .map((item) => _card(TravelRoute.fromJson(item))),
-                          operationRoutesAll.isEmpty
-                              ? Text("No trip available")
+                          operationRoutes.isEmpty
+                              ? Center(child:Text("Nothing was found"))
                               : SizedBox(
                                   height: 0,
                                 )
@@ -206,13 +208,17 @@ class _BookingState extends State<Booking> {
               ),
             ),
           ),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.search,
-                color: Palette.accentColor,
-                size: 40,
-              ))
+          Material(
+            elevation: 10,
+            shadowColor: Colors.grey[300],
+            child: IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.search,
+                  color: Palette.accentColor,
+                  size: 40,
+                )),
+          )
         ],
       ),
     );

@@ -35,10 +35,10 @@ class BookingServices {
     }
   }
 
-  static Future<List<dynamic>> getTrips({String q: ""}) async {
+  static Future<List<dynamic>> getTrips({Map<String, dynamic> q}) async {
     try {
       final response = await dio.get("${ipAddress}api/trip/",
-          queryParameters: {"q": q}, options: Options(sendTimeout: timeout));
+          queryParameters: q, options: Options(sendTimeout: timeout));
       return response.data as List;
     } catch (e) {
       throw getException(e);
