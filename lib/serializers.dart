@@ -29,10 +29,11 @@ class TravelRoute {
   final String origin;
   final String destination;
   final int cost;
-  TravelRoute(this.origin, this.destination, this.cost);
+  final bool available;
+  TravelRoute(this.origin, this.destination, this.cost, this.available);
   factory TravelRoute.fromJson(Map<String, dynamic> json) {
-    return TravelRoute(
-        json["origin"]["name"], json["destination"]["name"], json["cost"]);
+    return TravelRoute(json["origin"]["name"], json["destination"]["name"],
+        json["cost"], json["available"]);
   }
 }
 
@@ -90,5 +91,3 @@ class Vehicle {
         json["vehicle_registration_number"], json["color"], json["seats"]);
   }
 }
-
-

@@ -68,6 +68,7 @@ class _BookingState extends State<Booking> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     Widget _card(TravelRoute _route) {
+      String _label = _route.available == true ? "Book Now" : "Coming Soon";
       return Card(
         elevation: 3,
         shadowColor: Colors.grey[200],
@@ -90,7 +91,7 @@ class _BookingState extends State<Booking> {
                     color: Palette.dark[2],
                     fontSize: 15),
               ),
-              actionButton(context, "Book Now", () {
+              actionButton(context, _label, () {
                 Navigator.pushNamed(context, AppRoutes.makeBooking, arguments: {
                   "from": _route.origin,
                   "to": _route.destination
@@ -166,7 +167,7 @@ class _BookingState extends State<Booking> {
                           ...operationRoutes
                               .map((item) => _card(TravelRoute.fromJson(item))),
                           operationRoutes.isEmpty
-                              ? Center(child:Text("Nothing was found"))
+                              ? Center(child: Text("Nothing was found"))
                               : SizedBox(
                                   height: 0,
                                 )
@@ -198,6 +199,7 @@ class _BookingState extends State<Booking> {
               elevation: 10,
               shadowColor: Colors.grey[300],
               child: TextField(
+                
                 onChanged: filterData,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -208,17 +210,13 @@ class _BookingState extends State<Booking> {
               ),
             ),
           ),
-          Material(
-            elevation: 10,
-            shadowColor: Colors.grey[300],
-            child: IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.search,
-                  color: Palette.accentColor,
-                  size: 40,
-                )),
-          )
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.search,
+                color: Palette.accentColor,
+                size: 40,
+              ))
         ],
       ),
     );

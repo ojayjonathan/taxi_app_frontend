@@ -137,8 +137,8 @@ class _BookHistoryState extends State<BookHistory> {
     String _statusKey = _book.status;
     final Map _statusMap = {"A": "Active", "C": "Canceled", "F": "Fullfiled"};
     Map<String, Color> colors = {
-      "F": Palette.accentColor,
-      "A": Colors.amberAccent,
+      "F": Colors.amber,
+      "A": Palette.successColor,
       "C": Theme.of(context).errorColor
     };
     return Card(
