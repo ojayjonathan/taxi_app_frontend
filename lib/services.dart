@@ -123,9 +123,10 @@ Future<Map> feedback(String message) async {
     String authToken = await UserAuthentication.getAuthToken();
     final response = await Dio().post("${ipAddress}api/feedback/",
         options: Options(
-            headers: {'Authorization': 'Token $authToken'},
-            sendTimeout: timeout),
+          headers: {'Authorization': 'Token $authToken'},
+        ),
         data: {"message": message});
+    
     return response.data as Map;
   } catch (e) {
     throw getException(e);

@@ -33,6 +33,7 @@ Widget entryField(
               hintText: hintText),
           validator: validator,
           controller: controller,
+          enableSuggestions: true,
         )
       ],
     ),

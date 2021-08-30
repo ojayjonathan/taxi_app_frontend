@@ -64,6 +64,7 @@ class _UserFeedBackState extends State<UserFeedBack> {
             Form(
               child: TextFormField(
                 maxLines: 8,
+                controller:_message,
                 minLines: 6,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
