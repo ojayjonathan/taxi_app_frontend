@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/exception.dart';
 import 'package:taxi_app/screens/auth/auth_services.dart';
+import 'package:taxi_app/utils/validators.dart';
 
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/palette.dart';
 
 class LoginPage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       ));
       try {
         await UserAuthentication.loginUser({
-          "email": _email.text,
+          "email": _email.text.trim(),
           "password": _password.text,
           "registration_id": _registartionToken
         });
@@ -138,11 +138,8 @@ class _LoginPageState extends State<LoginPage> {
                             controller: _email,
                             icon: Icons.email,
                             hintText: "john@gmail.com",
-                            validator: MultiValidator([
-                              RequiredValidator(errorText: 'Required'),
-                              EmailValidator(
-                                  errorText: 'Enter a valid email address')
-                            ])),
+                            validator: emailValidator,
+                            keyboardType: TextInputType.emailAddress),
                         PasswordField(_password)
                       ]),
                     ),

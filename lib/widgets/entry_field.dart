@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/palette.dart';
 import 'package:taxi_app/utils/validators.dart';
 
-Widget entryField(
-  String title, {
-  Function validator,
-  TextEditingController controller,
-  IconData icon,
-  String hintText,
-}) {
+Widget entryField(String title,
+    {Function validator,
+    TextEditingController controller,
+    IconData icon,
+    String hintText,
+    TextInputType keyboardType = TextInputType.name}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 10),
     child: Column(
@@ -34,6 +33,7 @@ Widget entryField(
           validator: validator,
           controller: controller,
           enableSuggestions: true,
+          keyboardType: keyboardType,
         )
       ],
     ),
@@ -67,6 +67,7 @@ Widget phoneEntryField(String title,
           ),
           validator: validator,
           controller: controller,
+          keyboardType: TextInputType.phone,
         )
       ],
     ),
@@ -76,7 +77,7 @@ Widget phoneEntryField(String title,
 //password field
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-  
+
   const PasswordField(this.controller);
 
   @override
@@ -117,7 +118,9 @@ class _PasswordFieldState extends State<PasswordField> {
                     });
                   },
                   child: Icon(
-                      hidePassword ? Icons.visibility : Icons.visibility_off,color: Palette.dark[2],)),
+                    hidePassword ? Icons.visibility : Icons.visibility_off,
+                    color: Palette.dark[2],
+                  )),
             ),
             validator: passwordValidator,
             controller: widget.controller,

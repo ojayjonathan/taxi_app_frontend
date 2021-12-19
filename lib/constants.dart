@@ -13,12 +13,12 @@ class AppRoutes {
   static const introduction = "/introduction";
   static const login = "/login";
   static const logout = "/logout";
-  static const bookHistory = "/bookHistory";
+  static const bookHistory = "/my-book-history";
   static const driverTrip = "/driver-trip";
   static const driverTripDetail = "/driver-trip-details";
   static const support = "/support-page/";
   static const signup = "/signup";
   static const makeBooking = "/book-now";
-  static const connectionError = "/connectionError";
+  static const connectionError = "/connection-error";
   static const terms = "/terms";
 }

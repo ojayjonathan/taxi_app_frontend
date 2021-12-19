@@ -8,7 +8,6 @@ import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/palette.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -43,9 +42,9 @@ class _SignUpPageState extends State<SignUpPage> {
   void _sumitForm() async {
     if (!isChecked) {
       errorText = "Agree with terms and conditions.";
-    } else{
+    } else {
       errorText = "";
-    } 
+    }
     if (formKey.currentState.validate() && !_submiting && isChecked) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
@@ -161,22 +160,15 @@ class _SignUpPageState extends State<SignUpPage> {
                                   controller: _email,
                                   icon: Icons.email,
                                   hintText: "john@gmail.com",
-                                  validator: MultiValidator([
-                                    RequiredValidator(errorText: "Required"),
-                                    EmailValidator(
-                                        errorText:
-                                            "Please provide a valid email")
-                                  ])),
+                                  validator: emailValidator),
                               entryField("First Name",
                                   controller: _firstName,
-                                  validator:
-                                      RequiredValidator(errorText: "Required"),
+                                  validator: requiredValidator,
                                   icon: Icons.person,
                                   hintText: "john"),
                               entryField("Last Name",
                                   controller: _lastName,
-                                  validator:
-                                      RequiredValidator(errorText: "Required"),
+                                  validator: requiredValidator,
                                   icon: Icons.person,
                                   hintText: "doe"),
                               phoneEntryField("Phone number",
@@ -211,8 +203,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         ],
                       ),
                       Text(errorText,
-                          style:
-                              TextStyle(color: Theme.of(context).errorColor,fontSize: 10)),
+                          style: TextStyle(
+                              color: Theme.of(context).errorColor,
+                              fontSize: 10)),
                       SizedBox(
                         height: 10,
                       ),

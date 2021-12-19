@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/constants.dart';
 import 'package:taxi_app/exception.dart';
@@ -42,8 +41,6 @@ class _BookHistoryState extends State<BookHistory> {
               onPressed: () async {
                 fetchData();
               }));
-    } on DioError catch (e) {
-      _showSnackBar(e.response.toString(), Theme.of(context).errorColor);
     }
   }
 
@@ -89,7 +86,7 @@ class _BookHistoryState extends State<BookHistory> {
                 valueColor: AlwaysStoppedAnimation(Colors.black87),
               )
             : ListView(
-                children: <Widget>[
+                children: [
                   ..._bookings.map((item) =>
                       _bookingCard(CustomerTripBooking.fromJson(item))),
                   _bookings.isEmpty

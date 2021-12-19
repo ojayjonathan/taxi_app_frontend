@@ -19,3 +19,27 @@ String passwordValidator(value) {
     return null;
   }
 }
+
+String requiredValidator(String value) {
+  value = value.trim();
+  if (value == null || value.isEmpty) {
+    return "Required";
+  }
+  return null;
+}
+
+String emailValidator(String string) {
+  // Null or empty string is invalid
+  if (string == null || string.isEmpty) {
+    return "Required";
+  }
+  string = string.trim();
+
+  const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+  final regExp = RegExp(pattern);
+
+  if (!regExp.hasMatch(string)) {
+    return "Enter a valid email address";
+  }
+  return null;
+}

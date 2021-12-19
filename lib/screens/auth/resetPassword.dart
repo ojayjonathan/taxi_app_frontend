@@ -6,7 +6,6 @@ import 'package:taxi_app/utils/validators.dart';
 import 'package:taxi_app/widgets/buttons.dart';
 import "package:taxi_app/widgets/entry_field.dart";
 import 'package:taxi_app/widgets/paints/bezierContainer.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/palette.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -27,7 +26,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     if (formKey.currentState.validate()) {
       try {
         final res = await UserAuthentication.resetPassword(
-            data: {"email": _emailController.text});
+            data: {"email": _emailController.text.trim()});
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(res["message"],
                 style: TextStyle(color: Palette.successColor))));
@@ -118,11 +117,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     child: entryField("Email",
                         hintText: "johndoe@gmail.com",
                         icon: Icons.email,
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: "Required"),
-                          EmailValidator(
-                              errorText: "Please provide a valid email")
-                        ]),
+                        validator: emailValidator,
                         controller: _emailController),
                   ),
                   SizedBox(
@@ -157,7 +152,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     controller: _resetCodeController,
                     decoration: InputDecoration(hintText: "Enter code"),
                     keyboardType: TextInputType.number,
-                    validator: RequiredValidator(errorText: "Required"),
+                    validator: requiredValidator,
                   ),
                   TextFormField(
                     controller: _newPassordController,
