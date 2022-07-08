@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:taxi_app/constants.dart';
-import 'package:taxi_app/palette.dart';
+import 'package:taxi_app/resources/constants.dart';
+import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/routing.dart';
 
 const AndroidNotificationChannel channel = const AndroidNotificationChannel(
