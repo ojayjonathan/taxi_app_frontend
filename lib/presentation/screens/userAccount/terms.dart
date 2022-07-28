@@ -66,7 +66,7 @@ class Terms extends StatelessWidget {
                   fontSize: 15),
             ),
           ),
-          ...terms[key].map(
+          ...terms[key]!.map(
             (e) => Padding(
               padding: EdgeInsets.only(left: 30, top: 10),
               child: Text(

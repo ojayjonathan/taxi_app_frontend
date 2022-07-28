@@ -9,14 +9,14 @@ import 'package:taxi_app/resources/utils/validators.dart';
 
 class ProfilePage extends StatefulWidget {
   final User user;
-  const ProfilePage({Key key, this.user}) : super(key: key);
+  const ProfilePage({Key? key, required this.user}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User user;
+  User? user;
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
   GlobalKey<FormState> profileForm = GlobalKey<FormState>();
@@ -28,16 +28,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     user = widget.user;
-    _emailController.text = user.email;
-    _firstNameController.text = user.firstName;
-    _lastNameController.text = user.lastName;
-    _phoneNumberController.text = user.phoneNumber;
+    _emailController.text = user!.email;
+    _firstNameController.text = user!.firstName;
+    _lastNameController.text = user!.lastName;
+    _phoneNumberController.text = user!.phoneNumber;
     super.initState();
   }
 
   void _sumitForm() async {
     //update user profile
-    if (profileForm.currentState.validate()) {
+    if (profileForm.currentState!.validate()) {
       setState(() {
         _status = true;
         FocusScope.of(context).requestFocus(FocusNode());
@@ -75,7 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.response.toString(),
+              // e  .response.toString(),
+              // TODO: display error
+              "ERROR",
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
           ),

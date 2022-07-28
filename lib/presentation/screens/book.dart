@@ -9,16 +9,16 @@ import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class Booking extends StatefulWidget {
-  const Booking({Key key}) : super(key: key);
+  const Booking({Key? key}) : super(key: key);
 
   @override
   _BookingState createState() => _BookingState();
 }
 
 class _BookingState extends State<Booking> {
-  List<dynamic> operationRoutes;
+  List<dynamic>? operationRoutes;
   //for filtering in search
-  List<dynamic> operationRoutesAll;
+  List<dynamic>? operationRoutesAll;
   @override
   void initState() {
     fetchData();
@@ -60,7 +60,7 @@ class _BookingState extends State<Booking> {
 
   void filterData(String text) {
     text = text.toLowerCase();
-    Iterable<dynamic> _routesFiltered = operationRoutesAll.where(
+    Iterable<dynamic> _routesFiltered = operationRoutesAll!.where(
       (item) {
         return (item["origin"]["name"].toLowerCase().contains(text) ||
             item["destination"]["name"].toLowerCase().contains(text));
@@ -174,9 +174,9 @@ class _BookingState extends State<Booking> {
                         childAspectRatio: 1.2,
                         children: [
                           // ignore: sdk_version_ui_as_code
-                          ...operationRoutes
+                          ...operationRoutes!
                               .map((item) => _card(TravelRoute.fromJson(item))),
-                          operationRoutes.isEmpty
+                          operationRoutes!.isEmpty
                               ? Center(child: Text("Nothing was found"))
                               : SizedBox(
                                   height: 0,

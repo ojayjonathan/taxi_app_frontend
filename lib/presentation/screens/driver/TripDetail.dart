@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class TripDetail extends StatelessWidget {
-  const TripDetail({Key key}) : super(key: key);
+  const TripDetail({Key? key}) : super(key: key);
   //TODO:fetch data
   @override
   Widget build(BuildContext context) {

@@ -45,7 +45,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   initializeApp() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String _authToken = _prefs.get("authToken");
+    String? _authToken = _prefs.getString("authToken");
     bool _seen = _prefs.getBool("seen") ?? false;
     if (_seen) {
       if (_authToken == null) {

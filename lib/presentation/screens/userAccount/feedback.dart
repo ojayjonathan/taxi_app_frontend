@@ -3,7 +3,7 @@ import 'package:taxi_app/data/services.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class UserFeedBack extends StatefulWidget {
-  const UserFeedBack({Key key}) : super(key: key);
+  const UserFeedBack({Key? key}) : super(key: key);
 
   @override
   _UserFeedBackState createState() => _UserFeedBackState();

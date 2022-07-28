@@ -3,7 +3,7 @@ import 'package:taxi_app/presentation/widgets/paints/curvePaint.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class Trip extends StatelessWidget {
-  const Trip({Key key}) : super(key: key);
+  const Trip({Key? key}) : super(key: key);
   //TODO:fetch data
   void _confirmTrip() {
     //TODO:confirm tip api

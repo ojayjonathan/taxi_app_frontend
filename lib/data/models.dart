@@ -4,15 +4,15 @@ class User {
   final String firstName;
   final String lastName;
   final String phoneNumber;
-  final String profileImage;
+  final String? profileImage;
 
   User({
-    this.userId,
-    this.email,
-    this.firstName,
-    this.lastName,
+     required this.userId,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
     this.profileImage,
-    this.phoneNumber,
+    required this.phoneNumber,
   });
   factory User.fromJson(Map<String, dynamic> json) {
     return User(

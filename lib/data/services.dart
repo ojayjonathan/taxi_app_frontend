@@ -35,7 +35,7 @@ class BookingServices {
     }
   }
 
-  static Future<List<dynamic>> getTrips({Map<String, dynamic> q}) async {
+  static Future<List<dynamic>> getTrips({Map<String, dynamic>? q}) async {
     try {
       final response = await dio.get(
         "${ipAddress}api/trip/",
@@ -48,7 +48,9 @@ class BookingServices {
     }
   }
 
-  static Future cancelBooking({int bookId}) async {
+  static Future cancelBooking({
+    required int bookId,
+  }) async {
     try {
       String authToken = await UserAuthentication.getAuthToken();
       final response = await dio.put(

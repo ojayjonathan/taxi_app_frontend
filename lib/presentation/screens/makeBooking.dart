@@ -8,31 +8,35 @@ import 'package:taxi_app/resources/palette.dart';
 
 class BookConfirm extends StatefulWidget {
   final Map<String, dynamic> selectedRoute;
-  const BookConfirm({Key key, this.selectedRoute}) : super(key: key);
+  const BookConfirm({Key? key, required this.selectedRoute}) : super(key: key);
   @override
   _BookConfirmState createState() => _BookConfirmState();
 }
 
 class _BookConfirmState extends State<BookConfirm> {
-  List<dynamic> _availableTrip;
-  TextEditingController _numSeatsController = TextEditingController();
-  GlobalKey<FormState> _form = GlobalKey<FormState>();
-  TripSerializer _selectedTrip;
-  _BookConfirmState();
+  List<dynamic>? _availableTrip;
+  final TextEditingController _numSeatsController = TextEditingController();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  TripSerializer? _selectedTrip;
+
   @override
   void initState() {
     _init();
     super.initState();
   }
 
-  void _showSnackBar(String message, Color color,
-      {SnackBarAction action, Duration duration}) {
+  void _showSnackBar(
+    String message,
+    Color color, {
+    SnackBarAction? action,
+    Duration? duration,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           message,
           style: TextStyle(color: color),
         ),
-        duration: duration ?? Duration(milliseconds: 10000),
+        duration: duration ?? const Duration(milliseconds: 10000),
         action: action));
   }
 
@@ -53,39 +57,40 @@ class _BookConfirmState extends State<BookConfirm> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(
+        title: const Text(
           "Booking",
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white, fontWeight: FontWeight.w500, fontSize: 28),
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         height: MediaQuery.of(context).size.height,
         child: _availableTrip != null
             ? Column(
                 children: <Widget>[
-                  ..._availableTrip
+                  ..._availableTrip!
                       .map((trip) => _tripCard(TripSerializer.fromJson(trip))),
-                  _availableTrip.isEmpty
-                      ? Text("No trip scheduled for this route")
-                      : SizedBox(
+                  _availableTrip!.isEmpty
+                      ? const Text("No trip scheduled for this route")
+                      : const SizedBox(
                           height: 0,
                         )
                 ],
               )
             : Container(
                 alignment: Alignment.center,
-                child: CircularProgressIndicator(
+                child: const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation(Colors.black87),
-                )),
+                ),
+              ),
       ),
     );
   }
@@ -93,7 +98,7 @@ class _BookConfirmState extends State<BookConfirm> {
   Widget _tripCard(TripSerializer trip) {
     String departure = trip.departure;
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 3,
       shadowColor: Colors.grey[200],
       child: Padding(
@@ -111,7 +116,7 @@ class _BookConfirmState extends State<BookConfirm> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: departure != null
                         ? Text("Departure: ${trip.departure}", style: textstyle)
-                        : SizedBox(height: 0)),
+                        : const SizedBox(height: 0)),
                 Text("Available seats: ${trip.availableSeats}",
                     style: textstyle)
               ],
@@ -131,9 +136,12 @@ class _BookConfirmState extends State<BookConfirm> {
   }
 
   Widget _dialog() {
-    String _validator(String value) {
-      if (int.parse(value) > _selectedTrip.availableSeats) {
-        return "You can book a maximun of ${_selectedTrip.availableSeats} seats";
+    String? _validator(String? value) {
+      if (value == null) {
+        return "Required";
+      }
+      if (int.parse(value) > _selectedTrip!.availableSeats) {
+        return "You can book a maximun of ${_selectedTrip!.availableSeats} seats";
       }
       if (int.parse(value) < 0) {
         return "Provide valid number";
@@ -143,7 +151,7 @@ class _BookConfirmState extends State<BookConfirm> {
     }
 
     void _makeBooking() async {
-      if (_form.currentState.validate()) {
+      if (_form.currentState!.validate()) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -154,7 +162,7 @@ class _BookConfirmState extends State<BookConfirm> {
         );
         try {
           await BookingServices.makebooking(
-              _selectedTrip.id, int.parse(_numSeatsController.text));
+              _selectedTrip!.id, int.parse(_numSeatsController.text));
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Your booking has been confirmed",
                   style: TextStyle(color: Palette.successColor))));
@@ -175,16 +183,16 @@ class _BookConfirmState extends State<BookConfirm> {
     return Container(
       height: 300,
       child: AlertDialog(
-        title: Text('Confirm booking'),
+        title: const Text('Confirm booking'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Vehicle capacity: ${_selectedTrip.vehicle.capacity} seats"),
+            Text("Vehicle capacity: ${_selectedTrip!.vehicle.capacity} seats"),
             Form(
               key: _form,
               child: TextFormField(
                 controller: _numSeatsController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     helperText: "Select number of seats to book"),
                 validator: _validator,
                 keyboardType: TextInputType.number,

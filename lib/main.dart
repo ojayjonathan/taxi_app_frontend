@@ -6,12 +6,13 @@ import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/routing.dart';
 
-const AndroidNotificationChannel channel = const AndroidNotificationChannel(
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
-  'High Importance Notifications', // title
   'This channel is used for important notifications.', // description
+  description: 'High Importance Notifications', // title
   importance: Importance.high,
 );
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -40,55 +41,67 @@ Future<void> main() async {
     sound: true,
   );
 
-  runApp(Matndogo());
+  runApp(const Matndogo());
 }
 
 class Matndogo extends StatefulWidget {
+  const Matndogo({Key? key}) : super(key: key);
+
   @override
-  _MatndogoState createState() => _MatndogoState();
+  State<Matndogo> createState() => _MatndogoState();
 }
 
 class _MatndogoState extends State<Matndogo> {
   @override
   void initState() {
     super.initState();
-   
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification notification = message.notification;
-      AndroidNotification android = message.notification.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
+
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             notification.title,
             notification.body,
             NotificationDetails(
-                android: AndroidNotificationDetails(
-                    channel.id, channel.name, channel.description,
-                    color: Palette.primaryColor,
-                    playSound: true,
-                    icon: "@mipmap/launcher_icon")));
-      }
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      RemoteNotification notification = message.notification;
-      AndroidNotification android = message.notification.android;
-      if (notification != null && android != null) {
-        showDialog(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                color: Palette.primaryColor,
+                playSound: true,
+                icon: "@mipmap/launcher_icon",
+              ),
+            ),
+          );
+        }
+      },
+    );
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      (RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          showDialog(
             context: context,
             builder: (_) {
               return AlertDialog(
-                title: Text(notification.title),
+                title: Text(notification.title ?? ""),
                 content: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    children: [Text(notification.body)],
+                    children: [Text(notification.body ?? "")],
                   ),
                 ),
               );
-            });
-      }
-    });
+            },
+          );
+        }
+      },
+    );
   }
 
   @override

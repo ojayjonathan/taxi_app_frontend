@@ -16,8 +16,8 @@ class UserAuthentication {
         data: data,
         options: Options(sendTimeout: timeout),
       );
-      final _prefs = await SharedPreferences.getInstance();
-      _prefs.setString(
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
         "authToken",
         response.data['token'],
       );
@@ -27,8 +27,8 @@ class UserAuthentication {
   }
 
   static Future<String> getAuthToken() async {
-    final _prefs = await SharedPreferences.getInstance();
-    return _prefs.getString("authToken");
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("authToken") ?? "";
   }
 
   static Future<void> registerUser(String data) async {
@@ -41,24 +41,24 @@ class UserAuthentication {
   }
 
   static Future<User> updateProfile(String data) async {
-    final _prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     try {
-      String authToken = _prefs.getString("authToken");
-      var _profile = await dio.put("${ipAddress}api/customer/profile/",
+      String? authToken = prefs.getString("authToken");
+      var profile = await dio.put("${ipAddress}api/customer/profile/",
           options: Options(
               headers: {'Authorization': 'Token $authToken'},
               sendTimeout: timeout),
           data: data);
-      print(_profile.data);
-      _prefs.setString("user", jsonEncode(_profile.data));
-      return User.fromJson(_profile.data);
+      print(profile.data);
+      prefs.setString("user", jsonEncode(profile.data));
+      return User.fromJson(profile.data);
     } catch (e) {
       throw getException(e);
     }
   }
 
   static Future<void> uploadProfileIMage() async {}
-  static Future<Map<String, dynamic>> resetPassword({Map data}) async {
+  static Future<Map<String, dynamic>> resetPassword({required Map data}) async {
     try {
       final res = await dio.post("${ipAddress}api/auth/reset/", data: data);
       return res.data;
@@ -67,7 +67,8 @@ class UserAuthentication {
     }
   }
 
-  static Future<Map<String, dynamic>> setNewPassword({Map data}) async {
+  static Future<Map<String, dynamic>> setNewPassword(
+      {required Map data}) async {
     try {
       final res = await dio.put(
         "${ipAddress}api/auth/reset/",
@@ -81,16 +82,16 @@ class UserAuthentication {
   }
 
   static Future<User> refreshUserProfile() async {
-    final _prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     try {
-      String authToken = _prefs.getString("authToken");
+      String? authToken = prefs.getString("authToken");
       var profile = await dio.get(
         "${ipAddress}api/customer/profile/",
         options: Options(
             headers: {'Authorization': 'Token $authToken'},
             sendTimeout: timeout),
       );
-      _prefs.setString(
+      prefs.setString(
         "user",
         jsonEncode(profile.data),
       );
@@ -101,20 +102,20 @@ class UserAuthentication {
   }
 
   static Future<User> getUserProfile() async {
-    final _prefs = await SharedPreferences.getInstance();
-    String _userData = _prefs.get("user");
-    if (_userData != null) {
-      return User.fromJson(jsonDecode(_userData));
+    final prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString("user");
+    if (userData != null) {
+      return User.fromJson(jsonDecode(userData));
     } else {
       try {
-        String authToken = _prefs.getString("authToken");
+        String? authToken = prefs.getString("authToken");
         var profile = await dio.get(
           "${ipAddress}api/customer/profile/",
           options: Options(
               headers: {'Authorization': 'Token $authToken'},
               sendTimeout: timeout),
         );
-        _prefs.setString(
+        prefs.setString(
           "user",
           jsonEncode(profile.data),
         );

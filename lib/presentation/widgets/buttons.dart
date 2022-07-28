@@ -1,21 +1,26 @@
 import "package:flutter/material.dart";
 import 'package:taxi_app/resources/palette.dart';
 
-Widget submitButton(BuildContext context, Function validateForm, String label,
-    {double fontSize: 20, double borderRadius: 5}) {
+Widget submitButton(
+  BuildContext context,
+  Function() validateForm,
+  String label, {
+  double fontSize = 20,
+  double borderRadius = 5,
+}) {
   return InkWell(
     onTap: validateForm,
     splashColor: Colors.red,
     child: Container(
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.shade200,
-              offset: Offset(2, 4),
+              offset: const Offset(2, 4),
               blurRadius: 5,
               spreadRadius: 2)
         ],
@@ -42,17 +47,17 @@ Widget backButton(BuildContext context) {
       Navigator.pop(context);
     },
     child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-            child: Icon(
+            padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
+            child: const Icon(
               Icons.keyboard_arrow_left,
               color: Color(0xff090817),
             ),
           ),
-          Text('Back',
+          const Text('Back',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
         ],
       ),
@@ -60,8 +65,12 @@ Widget backButton(BuildContext context) {
   );
 }
 
-Widget actionButton(BuildContext context, String label, Function onPressed,
-    {double padding: 8}) {
+Widget actionButton(
+  BuildContext context,
+  String label,
+  Function() onPressed, {
+  double padding = 8,
+}) {
   return TextButton(
     onPressed: onPressed,
     style: ElevatedButton.styleFrom(primary: Palette.accentColor),
@@ -69,11 +78,11 @@ Widget actionButton(BuildContext context, String label, Function onPressed,
       padding: EdgeInsets.symmetric(vertical: padding),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Palette.accentColor),
       child: Text(
         label,
-        style: TextStyle(color: Colors.white, fontSize: 15),
+        style: const TextStyle(color: Colors.white, fontSize: 15),
       ),
     ),
   );
@@ -81,11 +90,11 @@ Widget actionButton(BuildContext context, String label, Function onPressed,
 
 Widget outLineBtn() {
   return OutlinedButton.icon(
-    icon: Icon(Icons.star_outline),
-    label: Text("OutlinedButton"),
+    icon: const Icon(Icons.star_outline),
+    label: const Text("OutlinedButton"),
     onPressed: () => print("it's pressed"),
     style: ElevatedButton.styleFrom(
-      side: BorderSide(width: 2.0, color: Colors.blue),
+      side: const BorderSide(width: 2.0, color: Colors.blue),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(32.0),
       ),
@@ -93,23 +102,27 @@ Widget outLineBtn() {
   );
 }
 
-Widget cancelButton(BuildContext context, String label, Function onPressed) {
+Widget cancelButton(
+  BuildContext context,
+  String label,
+  Function() onPressed,
+) {
   return TextButton(
     onPressed: onPressed,
     style: ElevatedButton.styleFrom(
-      primary: Color(0xffACAFC7),
+      primary: const Color(0xffACAFC7),
     ),
     child: Container(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       alignment: Alignment.center,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(5),
           ),
           color: Color(0xffACAFC7)),
       child: Text(
         label,
-        style: TextStyle(color: Colors.white, fontSize: 15),
+        style: const TextStyle(color: Colors.white, fontSize: 15),
       ),
     ),
   );

@@ -11,8 +11,7 @@ import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({Key key, this.title}) : super(key: key);
-  final String title;
+  SignUpPage({Key? key, String? title}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -21,12 +20,12 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  TextEditingController _email = TextEditingController();
-  TextEditingController _firstName = TextEditingController();
-  TextEditingController _lastName = TextEditingController();
-  TextEditingController _password = TextEditingController();
-  TextEditingController _phoneNumber = TextEditingController();
-  String _registartionToken;
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _firstName = TextEditingController();
+  final TextEditingController _lastName = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _phoneNumber = TextEditingController();
+  String? _registartionToken;
   bool _submiting = false;
   bool isChecked = false;
   String errorText = "";
@@ -45,7 +44,7 @@ class _SignUpPageState extends State<SignUpPage> {
     } else {
       errorText = "";
     }
-    if (formKey.currentState.validate() && !_submiting && isChecked) {
+    if (formKey.currentState?.validate() == true && !_submiting && isChecked) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -67,12 +66,15 @@ class _SignUpPageState extends State<SignUpPage> {
         // push the user to login page
         Navigator.of(context).pushNamed(AppRoutes.login);
       } on Failure catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(
               e.message,
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
-            duration: Duration(milliseconds: 10000)));
+            duration: const Duration(milliseconds: 10000),
+          ),
+        );
       }
     }
     _submiting = false;
@@ -107,16 +109,16 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _loginLabel() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
+          const Text(
             "Have an account ?",
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           InkWell(
@@ -137,110 +139,109 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            SafeArea(
-              child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _title(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Form(
-                          key: formKey,
-                          child: Column(
-                            children: <Widget>[
-                              entryField(
-                                "Email",
-                                controller: _email,
-                                icon: Icons.email,
-                                hintText: "john@gmail.com",
-                                validator: emailValidator,
-                              ),
-                              entryField(
-                                "First Name",
-                                controller: _firstName,
-                                validator: requiredValidator,
-                                icon: Icons.person,
-                                hintText: "john",
-                              ),
-                              entryField(
-                                "Last Name",
-                                controller: _lastName,
-                                validator: requiredValidator,
-                                icon: Icons.person,
-                                hintText: "doe",
-                              ),
-                              phoneEntryField(
-                                "Phone number",
-                                validator: phoneValidator,
-                                controller: _phoneNumber,
-                              ),
-                              PasswordField(_password)
-                            ],
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            checkColor: Colors.white,
-                            value: isChecked,
-                            onChanged: (bool value) {
-                              setState(() {
-                                isChecked = value;
-                              });
-                            },
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.of(context)
-                                .popAndPushNamed(AppRoutes.terms),
-                            child: Text(
-                              'Accept  ',
-                              style: TextStyle(
-                                  color: Palette.dark[2],
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600),
+      body: Stack(
+        children: <Widget>[
+          SafeArea(
+            child: Container(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _title(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Form(
+                        key: formKey,
+                        child: Column(
+                          children: <Widget>[
+                            entryField(
+                              "Email",
+                              controller: _email,
+                              icon: Icons.email,
+                              hintText: "john@gmail.com",
+                              validator: emailValidator,
                             ),
+                            entryField(
+                              "First Name",
+                              controller: _firstName,
+                              validator: requiredValidator,
+                              icon: Icons.person,
+                              hintText: "john",
+                            ),
+                            entryField(
+                              "Last Name",
+                              controller: _lastName,
+                              validator: requiredValidator,
+                              icon: Icons.person,
+                              hintText: "doe",
+                            ),
+                            phoneEntryField(
+                              "Phone number",
+                              validator: phoneValidator,
+                              controller: _phoneNumber,
+                            ),
+                            PasswordField(_password)
+                          ],
+                        )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          value: isChecked,
+                          onChanged: (bool? value) {
+                            if (value == null) return;
+                            setState(() {
+                              isChecked = value;
+                            });
+                          },
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.of(context)
+                              .popAndPushNamed(AppRoutes.terms),
+                          child: Text(
+                            'Accept  ',
+                            style: TextStyle(
+                                color: Palette.dark[2],
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600),
                           ),
-                          Text("terms and conditions to continue.")
-                        ],
-                      ),
-                      Text(
-                        errorText,
-                        style: TextStyle(
-                            color: Theme.of(context).errorColor, fontSize: 10),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      submitButton(context, _sumitForm, "Register"),
-                      _loginLabel(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
+                        ),
+                        const Text("terms and conditions to continue.")
+                      ],
+                    ),
+                    Text(
+                      errorText,
+                      style: TextStyle(
+                          color: Theme.of(context).errorColor, fontSize: 10),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    submitButton(context, _sumitForm, "Register"),
+                    _loginLabel(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
                 ),
               ),
             ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Hero(
-                tag: "page_paint",
-                child: BezierContainer(),
-              ),
+          ),
+          const Positioned(
+            top: 0,
+            right: 0,
+            child: Hero(
+              tag: "page_paint",
+              child: BezierContainer(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

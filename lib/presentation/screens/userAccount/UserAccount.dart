@@ -16,7 +16,7 @@ class AccountPage extends StatefulWidget {
 
 class MapScreenState extends State<AccountPage>
     with SingleTickerProviderStateMixin {
-  User user;
+  User? user;
 
   @override
   void initState() {
@@ -72,8 +72,8 @@ class MapScreenState extends State<AccountPage>
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                             color: Palette.lighBlueColor,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40),
+                            borderRadius: const BorderRadius.only(
+                                topLeft: const Radius.circular(40),
                                 topRight: Radius.circular(40))),
                         child: Column(
                           children: [
@@ -91,7 +91,7 @@ class MapScreenState extends State<AccountPage>
                                       });
                                     },
                                     child: Container(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           bottom:
                                               5, // Space between underline and text
                                         ),
@@ -109,7 +109,7 @@ class MapScreenState extends State<AccountPage>
                                   ),
                                   InkWell(
                                     child: Container(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           bottom:
                                               5, // Space between underline and text
                                         ),
@@ -142,12 +142,12 @@ class MapScreenState extends State<AccountPage>
                                 ? _menu()
                                 : Container(
                                     child: user == null
-                                        ? CircularProgressIndicator(
+                                        ? const CircularProgressIndicator(
                                             valueColor: AlwaysStoppedAnimation(
                                                 Colors.black87),
                                           )
                                         : ProfilePage(
-                                            user: user,
+                                            user: user!,
                                           ),
                                   )
                           ],
@@ -158,7 +158,7 @@ class MapScreenState extends State<AccountPage>
                 ],
               ),
             ),
-            Positioned(
+            const Positioned(
               top: 0,
               right: 0,
               child: Hero(
@@ -199,7 +199,7 @@ class MapScreenState extends State<AccountPage>
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 30.0),
+            padding: const EdgeInsets.only(top: 30.0),
             child: Stack(
               fit: StackFit.loose,
               children: <Widget>[
@@ -208,29 +208,30 @@ class MapScreenState extends State<AccountPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                        width: 100.0,
-                        height: 100.0,
-                        alignment: Alignment.center,
-                        child: user != null
-                            ? Text(
-                                "${user.firstName[0]}${user.lastName[0]}"
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            : Container(),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Palette.primary3Color
-                            //TODO:replace name initials with profile image
+                      width: 100.0,
+                      height: 100.0,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Palette.primary3Color
+                          //TODO:replace name initials with profile image
 
-                            // image: DecorationImage(
-                            //   image: ExactAssetImage(
-                            //       'assets/profile.png'),
-                            //   fit: BoxFit.cover,
-                            // ),
-                            )),
+                          // image: DecorationImage(
+                          //   image: ExactAssetImage(
+                          //       'assets/profile.png'),
+                          //   fit: BoxFit.cover,
+                          // ),
+                          ),
+                      child: user != null
+                          ? Text(
+                              "${user?.firstName[0]}${user?.lastName[0]}"
+                                  .toUpperCase(),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Container(),
+                    ),
                   ],
                 ),
                 // Padding(
@@ -259,7 +260,7 @@ class MapScreenState extends State<AccountPage>
   Widget _labelText(String label) {
     return Text(
       label,
-      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
     );
   }
 
@@ -289,7 +290,11 @@ class MapScreenState extends State<AccountPage>
     );
   }
 
-  Widget _menuItem(String label, IconData icon, {Function onPressed}) {
+  Widget _menuItem(
+    String label,
+    IconData icon, {
+    Function()? onPressed,
+  }) {
     return InkWell(
       onTap: onPressed,
       child: Padding(
@@ -306,7 +311,7 @@ class MapScreenState extends State<AccountPage>
                 )
               ],
             ),
-            Icon(Icons.arrow_forward_ios)
+            const Icon(Icons.arrow_forward_ios)
           ],
         ),
       ),

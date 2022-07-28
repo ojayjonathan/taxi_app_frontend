@@ -5,7 +5,7 @@ class CurvePainter extends CustomClipper<Path> {
   Path getClip(Size size) {
     var height = size.height;
     var width = size.width;
-    var path = new Path();
+    var path = Path();
     path.lineTo(0, size.height);
     path.quadraticBezierTo(width * 0.5, height * 0.1, width, height * 0.25);
     path.lineTo(width, 0);
@@ -21,22 +21,23 @@ class CurvePainter extends CustomClipper<Path> {
 }
 
 class CurvePaint extends StatelessWidget {
-  const CurvePaint({Key key}) : super(key: key);
+  const CurvePaint({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: ClipPath(
+    return ClipPath(
       clipper: CurvePainter(),
       child: Container(
         height: MediaQuery.of(context).size.height * .25,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffe46b10), Color(0xfffbb448)])),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xffe46b10), Color(0xfffbb448)],
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

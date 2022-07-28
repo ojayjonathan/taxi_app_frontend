@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   //will be used for push notification
-  String _registartionToken;
+  String? _registartionToken;
   @override
   void dispose() {
     _email.dispose();
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _submiting = false;
   void validateForm() async {
-    if (formkey.currentState.validate() && !_submiting) {
+    if (formkey.currentState!.validate() && !_submiting) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -56,7 +56,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.makeBooking:
       final args = settings.arguments;
       return MaterialPageRoute(
-          builder: (context) => BookConfirm(selectedRoute: args));
+        builder: (context) =>
+            BookConfirm(selectedRoute: args as Map<String, dynamic>),
+      );
     case AppRoutes.support:
       return MaterialPageRoute(
         builder: (context) => ContactUs(),

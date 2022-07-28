@@ -11,15 +11,19 @@ class BookHistory extends StatefulWidget {
 }
 
 class _BookHistoryState extends State<BookHistory> {
-  List<dynamic> _bookings;
-  Map<String, Color> scaffoldData;
+  List<dynamic>? _bookings;
+  Map<String, Color>? scaffoldData;
   @override
   void initState() {
     super.initState();
     fetchData();
   }
 
-  void _showSnackBar(String message, Color color, {SnackBarAction action}) {
+  void _showSnackBar(
+    String message,
+    Color color, {
+    SnackBarAction? action,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           message,
@@ -30,9 +34,9 @@ class _BookHistoryState extends State<BookHistory> {
 
   void fetchData() async {
     try {
-      List _apiData = await BookingServices.getBookingHistory();
+      List apiData = await BookingServices.getBookingHistory();
       setState(() {
-        _bookings = _apiData;
+        _bookings = apiData;
       });
     } on Failure catch (e) {
       _showSnackBar(e.message, Theme.of(context).errorColor,
@@ -63,15 +67,15 @@ class _BookHistoryState extends State<BookHistory> {
       appBar: AppBar(
         centerTitle: true,
         title: Title(
-          child: Text(
+          color: Colors.white,
+          child: const Text(
             "My Bookings",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          color: Colors.white,
         ),
         // backgroundColor: Color(0xfffafafa),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
@@ -79,19 +83,19 @@ class _BookHistoryState extends State<BookHistory> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         alignment: Alignment.center,
         child: _bookings == null
-            ? CircularProgressIndicator(
+            ? const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation(Colors.black87),
               )
             : ListView(
                 children: [
-                  ..._bookings.map((item) =>
+                  ..._bookings!.map((item) =>
                       _bookingCard(CustomerTripBooking.fromJson(item))),
-                  _bookings.isEmpty
-                      ? Text("You haven't booked any trip yet")
-                      : SizedBox(
+                  _bookings!.isEmpty
+                      ? const Text("You haven't booked any trip yet")
+                      : const SizedBox(
                           height: 0,
                         )
                 ],
@@ -100,22 +104,22 @@ class _BookHistoryState extends State<BookHistory> {
     );
   }
 
-  Widget _tripDetails(CustomerTripBooking _book) {
+  Widget _tripDetails(CustomerTripBooking book) {
     return AlertDialog(
-      title: Text('Trip Details'),
+      title: const Text('Trip Details'),
       content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Vehicle Capacity: ${_book.trip.vehicle.capacity} seats"),
-            SizedBox(height: 5),
-            Text("Vehicle Color: ${_book.trip.vehicle.color}"),
-            SizedBox(height: 5),
-            Text("Vehicle Reg No: ${_book.trip.vehicle.regNumber}"),
-            SizedBox(height: 5),
-            Text("Driver Contact: ${_book.trip.driver.phoneNumber}"),
-            _book.trip.departure != null
-                ? Text("Departure: ${_book.trip.departure}")
+            Text("Vehicle Capacity: ${book.trip.vehicle.capacity} seats"),
+            const SizedBox(height: 5),
+            Text("Vehicle Color: ${book.trip.vehicle.color}"),
+            const SizedBox(height: 5),
+            Text("Vehicle Reg No: ${book.trip.vehicle.regNumber}"),
+            const SizedBox(height: 5),
+            Text("Driver Contact: ${book.trip.driver.phoneNumber}"),
+            book.trip.departure != null
+                ? Text("Departure: ${book.trip.departure}")
                 : Container()
           ]),
       actions: [
@@ -130,16 +134,16 @@ class _BookHistoryState extends State<BookHistory> {
   TextStyle textStyle = TextStyle(
       color: Palette.dark[2], fontWeight: FontWeight.w500, fontSize: 16);
 
-  Widget _bookingCard(CustomerTripBooking _book) {
-    String _statusKey = _book.status;
-    final Map _statusMap = {"A": "Active", "C": "Canceled", "F": "Fullfiled"};
+  Widget _bookingCard(CustomerTripBooking book) {
+    String statusKey = book.status;
+    final Map statusMap = {"A": "Active", "C": "Canceled", "F": "Fullfiled"};
     Map<String, Color> colors = {
       "F": Colors.amber,
       "A": Palette.successColor,
       "C": Theme.of(context).errorColor
     };
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 3,
       shadowColor: Colors.grey[200],
       child: Padding(
@@ -152,10 +156,10 @@ class _BookHistoryState extends State<BookHistory> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${_book.trip.route.origin} - ${_book.trip.route.destination}",
+                  "${book.trip.route.origin} - ${book.trip.route.destination}",
                   style: textStyle,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 RichText(
@@ -165,24 +169,23 @@ class _BookHistoryState extends State<BookHistory> {
                     style: textStyle,
                   ),
                   TextSpan(
-                    text: "${_statusMap[_statusKey]}",
+                    text: "${statusMap[statusKey]}",
                     style: TextStyle(
-                        color: colors[_statusKey], fontWeight: FontWeight.w500),
+                        color: colors[statusKey], fontWeight: FontWeight.w500),
                   )
                 ]))
               ],
             ),
             TextButton(
                 onPressed: () => showDialog<void>(
-                    context: context,
-                    builder: (context) => _tripDetails(_book)),
-                child: Text("Details")),
-            _statusKey == "A"
+                    context: context, builder: (context) => _tripDetails(book)),
+                child: const Text("Details")),
+            statusKey == "A"
                 ? TextButton(
-                    onPressed: () => _cancelBooking(_book.id),
-                    child: Text("Cancel"))
+                    onPressed: () => _cancelBooking(book.id),
+                    child: const Text("Cancel"))
                 : TextButton(
-                    child: Text("Feedback"),
+                    child: const Text("Feedback"),
                     onPressed: () =>
                         Navigator.of(context).pushNamed(AppRoutes.feedback))
           ],

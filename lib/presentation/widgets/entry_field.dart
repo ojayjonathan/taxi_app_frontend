@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
 
-Widget entryField(String title,
-    {Function validator,
-    TextEditingController controller,
-    IconData icon,
-    String hintText,
-    TextInputType keyboardType = TextInputType.name}) {
+typedef Validator = String? Function(String?)?;
+
+Widget entryField(
+  String title, {
+  Validator validator,
+  TextEditingController? controller,
+  IconData? icon,
+  String? hintText,
+  TextInputType keyboardType = TextInputType.name,
+}) {
   return Container(
-    margin: EdgeInsets.symmetric(vertical: 10),
+    margin: const EdgeInsets.symmetric(vertical: 10),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -20,13 +24,13 @@ Widget entryField(String title,
               color: Palette.dark[2],
               fontSize: 15),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         TextFormField(
           decoration: InputDecoration(
               border: InputBorder.none,
-              fillColor: Color(0xfff3f3f4),
+              fillColor: const Color(0xfff3f3f4),
               filled: true,
               prefixIcon: Icon(icon),
               hintText: hintText),
@@ -40,10 +44,13 @@ Widget entryField(String title,
   );
 }
 
-Widget phoneEntryField(String title,
-    {Function validator, TextEditingController controller}) {
+Widget phoneEntryField(
+  String title, {
+  Validator validator,
+  TextEditingController? controller,
+}) {
   return Container(
-    margin: EdgeInsets.symmetric(vertical: 10),
+    margin: const EdgeInsets.symmetric(vertical: 10),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -54,15 +61,15 @@ Widget phoneEntryField(String title,
               color: Palette.dark[2],
               fontSize: 15),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         TextFormField(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: InputBorder.none,
-            fillColor: Color(0xfff3f3f4),
+            fillColor: const Color(0xfff3f3f4),
             filled: true,
-            prefixIcon: Icon(Icons.phone),
+            prefixIcon: const Icon(Icons.phone),
             hintText: "0734434334",
           ),
           validator: validator,
@@ -78,10 +85,10 @@ Widget phoneEntryField(String title,
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
 
-  const PasswordField(this.controller);
+  const PasswordField(this.controller, {Key? key}) : super(key: key);
 
   @override
-  _PasswordFieldState createState() => _PasswordFieldState();
+  State<PasswordField> createState() => _PasswordFieldState();
 }
 
 class _PasswordFieldState extends State<PasswordField> {
@@ -89,7 +96,7 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -100,16 +107,16 @@ class _PasswordFieldState extends State<PasswordField> {
                 color: Palette.dark[2],
                 fontSize: 15),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           TextFormField(
             obscureText: hidePassword,
             decoration: InputDecoration(
               border: InputBorder.none,
-              fillColor: Color(0xfff3f3f4),
+              fillColor: const Color(0xfff3f3f4),
               filled: true,
-              prefixIcon: Icon(Icons.lock),
+              prefixIcon: const Icon(Icons.lock),
               hintText: "password",
               suffix: InkWell(
                   onTap: () {

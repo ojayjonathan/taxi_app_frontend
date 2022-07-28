@@ -17,8 +17,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     Navigator.of(context).pushNamed(AppRoutes.welcome);
   }
 
-
-
   Widget _buldSvg(String assetName) {
     return SvgPicture.asset(
       "assets/graphics/$assetName",
@@ -29,39 +27,35 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    const pageDecoration = const PageDecoration(
+    const pageDecoration = PageDecoration(
         titleTextStyle: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w600,
-            color: const Color(0xff495057)),
-        descriptionPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+            color: Color(0xff495057)),
+        bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
         imagePadding: EdgeInsets.all(15),
         imageAlignment: Alignment.center,
-        bodyTextStyle: TextStyle(
-          color:Color(0xff495057), fontWeight: FontWeight.w400
-        ));
+        bodyTextStyle:
+            TextStyle(color: Color(0xff495057), fontWeight: FontWeight.w400));
 
     return IntroductionScreen(
       key: introKey,
       pages: [
         PageViewModel(
           title: "Welcome",
-          body:
-              "Commute in real-time with fun",
+          body: "Commute in real-time with fun",
           image: _buldSvg("intro_p1.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Get started",
-          body:
-              "Create an  account to get started.",
+          body: "Create an  account to get started.",
           image: _buldSvg("taxi.svg"),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Make a booking",
-          body:
-              "Booking made easier with a click of a button .",
+          body: "Booking made easier with a click of a button .",
           image: _buldSvg("intro_p3_.svg"),
           decoration: pageDecoration,
         ),
@@ -76,7 +70,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       onDone: () => _onIntroEnd(context),
       //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
       showSkipButton: true,
-      skipFlex: 0,
       nextFlex: 0,
       //rtl: true, // Display as right-to-left
       skip: const Text('Skip'),

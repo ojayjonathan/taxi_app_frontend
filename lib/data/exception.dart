@@ -23,10 +23,10 @@ Failure getException(error) {
           case DioErrorType.connectTimeout:
             return Failure("Connection timeout of $timeout ms exceeded", 0);
           case DioErrorType.response:
-            switch (error.response.statusCode) {
+            switch (error.response!.statusCode) {
               case 400:
                 return Failure(
-                  error.response.data["message"] ?? error.response.toString(),
+                  error.response!.data["message"] ?? error.response.toString(),
                   499,
                 );
               case 401:
@@ -42,9 +42,11 @@ Failure getException(error) {
                 return Failure("Internal server error", 500);
 
               default:
-                return Failure("An error occured", error.response.statusCode);
+                return Failure(
+                  "An error occured",
+                  error.response!.statusCode!,
+                );
             }
-            break;
           case DioErrorType.sendTimeout:
             return Failure("Timeout", 408);
 

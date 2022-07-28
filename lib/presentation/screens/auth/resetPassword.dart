@@ -15,15 +15,15 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  GlobalKey<FormState> _newPasswordKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _resetCodeController = TextEditingController();
-  TextEditingController _newPassordController = TextEditingController();
+  final GlobalKey<FormState> _newPasswordKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _resetCodeController = TextEditingController();
+  final TextEditingController _newPassordController = TextEditingController();
   bool hidePassword = true;
-  String uid;
+  late String uid;
   void resetPassword() async {
     ScaffoldMessenger.of(context).clearSnackBars();
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState?.validate() == true) {
       try {
         final res = await UserAuthentication.resetPassword(
             data: {"email": _emailController.text.trim()});
@@ -45,7 +45,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   void setNewPassword() async {
-    if (_newPasswordKey.currentState.validate()) {
+    if (_newPasswordKey.currentState?.validate() == true) {
       ScaffoldMessenger.of(context).clearSnackBars();
 
       try {
