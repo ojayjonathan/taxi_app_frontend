@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_app/data/auth_services.dart';
-import 'package:taxi_app/data/exception.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
 import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
@@ -9,8 +9,10 @@ import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
 
 class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({Key? key}) : super(key: key);
+
   @override
-  _ResetPasswordPageState createState() => _ResetPasswordPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
@@ -21,54 +23,62 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController _newPassordController = TextEditingController();
   bool hidePassword = true;
   late String uid;
+
   void resetPassword() async {
     ScaffoldMessenger.of(context).clearSnackBars();
     if (formKey.currentState?.validate() == true) {
-      try {
-        final res = await UserAuthentication.resetPassword(
-            data: {"email": _emailController.text.trim()});
+      final res = await Client.customer
+          .passwordReset({"email": _emailController.text.trim()});
+      res.when((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message,
+              style: TextStyle(color: Theme.of(context).errorColor),
+            ),
+          ),
+        );
+      }, (data) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(res["message"],
+            content: Text(data["message"],
                 style: TextStyle(color: Palette.successColor))));
         setState(() {
-          uid = res["uid"];
+          uid = data["uid"];
         });
         showDialog<void>(context: context, builder: (context) => _dialog());
-      } on Failure catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          e.message,
-          style: TextStyle(color: Theme.of(context).errorColor),
-        )));
-      }
+      });
     }
   }
 
   void setNewPassword() async {
     if (_newPasswordKey.currentState?.validate() == true) {
       ScaffoldMessenger.of(context).clearSnackBars();
-
-      try {
-        final res = await UserAuthentication.setNewPassword(data: {
-          "new_password": _newPassordController.text,
-          "uid": uid,
-          "short_code": _resetCodeController.text
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(res["message"],
-                style: TextStyle(color: Palette.successColor))));
-        Navigator.of(context).pushNamed(AppRoutes.login);
-      } on Failure catch (e) {
+      final res = await Client.customer.setNewPassword({
+        "new_password": _newPassordController.text,
+        "uid": uid,
+        "short_code": _resetCodeController.text
+      });
+      res.when((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.message,
+              error.message,
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
-            duration: Duration(milliseconds: 10000),
+            duration: const Duration(milliseconds: 10000),
           ),
         );
-      }
+      }, (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Password  changed successfuly",
+              style: TextStyle(color: Palette.successColor),
+            ),
+          ),
+        );
+        Navigator.of(context).pushNamed(AppRoutes.login);
+      });
     }
   }
 
@@ -105,15 +115,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         child: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
                   _title(),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Form(
@@ -124,7 +134,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         validator: emailValidator,
                         controller: _emailController),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   submitButton(context, resetPassword, "Reset Password"),
@@ -132,10 +142,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ),
             ),
             Positioned(top: 40, left: 0, child: backButton(context)),
-            Positioned(
+            const Positioned(
                 top: 0,
                 right: 0,
-                child: Hero(tag: "page_paint", child: BezierContainer())),
+                child: Hero(
+                    tag: "page_paint", child: BezierContainer())),
           ],
         ),
       ),
@@ -144,7 +155,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   Widget _dialog() {
     return AlertDialog(
-      title: Text('Set new password'),
+      title: const Text('Set new password'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -154,7 +165,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 children: [
                   TextFormField(
                     controller: _resetCodeController,
-                    decoration: InputDecoration(hintText: "Enter code"),
+                    decoration: const InputDecoration(hintText: "Enter code"),
                     keyboardType: TextInputType.number,
                     validator: requiredValidator,
                   ),

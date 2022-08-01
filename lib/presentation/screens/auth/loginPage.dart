@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/auth_services.dart';
-import 'package:taxi_app/data/exception.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
 import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
@@ -10,16 +9,19 @@ import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   //will be used for push notification
   String? _registartionToken;
+
   @override
   void dispose() {
     _email.dispose();
@@ -41,19 +43,31 @@ class _LoginPageState extends State<LoginPage> {
     if (formkey.currentState!.validate() && !_submiting) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Submiting please wait...',
-          style: TextStyle(color: Palette.successColor),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Submiting please wait...',
+            style: TextStyle(color: Palette.successColor),
+          ),
+          duration: const Duration(milliseconds: 10000),
         ),
-        duration: Duration(milliseconds: 10000),
-      ));
-      try {
-        await UserAuthentication.loginUser({
-          "email": _email.text.trim(),
-          "password": _password.text,
-          "registration_id": _registartionToken
-        });
+      );
+      final res = await Client.customer.login({
+        "email": _email.text.trim(),
+        "password": _password.text,
+        "registration_id": _registartionToken
+      });
+      res.when((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message,
+              style: TextStyle(color: Theme.of(context).errorColor),
+            ),
+            duration: const Duration(seconds: 30),
+          ),
+        );
+      }, (data) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -63,31 +77,20 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-      } on Failure catch (e) {
-        _submiting = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.message,
-              style: TextStyle(color: Theme.of(context).errorColor),
-            ),
-            duration: Duration(seconds: 60),
-          ),
-        );
-      }
+      });
     }
   }
 
   Widget _createAccountLabel() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('Don\'t have an account ?',
+          const Text('Don\'t have an account ?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           InkWell(
             onTap: () =>
                 Navigator.of(context).popAndPushNamed(AppRoutes.signup),
@@ -122,20 +125,20 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         height: height,
         child: Stack(
           children: <Widget>[
             Center(
               child: SafeArea(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       _title(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Form(
                         key: formkey,
                         child: Column(children: <Widget>[
@@ -150,15 +153,15 @@ class _LoginPageState extends State<LoginPage> {
                           PasswordField(_password)
                         ]),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       submitButton(context, validateForm, "Login"),
                       Container(
-                        padding: EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.only(top: 8),
                         alignment: Alignment.centerRight,
                         child: InkWell(
                           onTap: () => Navigator.of(context)
                               .pushNamed(AppRoutes.resetPassword),
-                          child: Text('Forgot Password ?',
+                          child: const Text('Forgot Password ?',
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500)),
                         ),
@@ -169,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            Positioned(
+            const Positioned(
               top: 0,
               right: 0,
               child: Hero(

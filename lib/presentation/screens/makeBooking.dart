@@ -17,7 +17,7 @@ class _BookConfirmState extends State<BookConfirm> {
   List<dynamic>? _availableTrip;
   final TextEditingController _numSeatsController = TextEditingController();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
-  TripSerializer? _selectedTrip;
+  TripModel? _selectedTrip;
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _BookConfirmState extends State<BookConfirm> {
             ? Column(
                 children: <Widget>[
                   ..._availableTrip!
-                      .map((trip) => _tripCard(TripSerializer.fromJson(trip))),
+                      .map((trip) => _tripCard(TripModel.fromJson(trip))),
                   _availableTrip!.isEmpty
                       ? const Text("No trip scheduled for this route")
                       : const SizedBox(
@@ -95,7 +95,7 @@ class _BookConfirmState extends State<BookConfirm> {
     );
   }
 
-  Widget _tripCard(TripSerializer trip) {
+  Widget _tripCard(TripModel trip) {
     String departure = trip.departure;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),

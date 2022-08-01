@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:taxi_app/data/auth_services.dart';
 import 'package:taxi_app/data/models.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
@@ -12,7 +13,7 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key, required this.user}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -20,10 +21,10 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
   GlobalKey<FormState> profileForm = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -42,25 +43,34 @@ class _ProfilePageState extends State<ProfilePage> {
         _status = true;
         FocusScope.of(context).requestFocus(FocusNode());
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
           content: Text(
-        "Updating please wait...",
-        style: TextStyle(color: Palette.successColor),
-      )));
-      try {
-        User _updatedUser = await UserAuthentication.updateProfile(
-          jsonEncode(
-            {
-              "email": _emailController.text,
-              "first_name": _firstNameController.text,
-              "last_name": _lastNameController.text,
-              "phone_number":
-                  "+254${(_phoneNumberController.text).substring(1)}",
-            },
+            "Updating please wait...",
+            style: TextStyle(color: Palette.successColor),
+          ),
+        ),
+      );
+      final res = await Client.customer.profileUpdate(
+        {
+          "email": _emailController.text,
+          "first_name": _firstNameController.text,
+          "last_name": _lastNameController.text,
+          "phone_number": "+254${(_phoneNumberController.text).substring(1)}",
+        },
+      );
+      res.when((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message,
+              style: TextStyle(color: Theme.of(context).errorColor),
+            ),
           ),
         );
+      }, (data) {
         setState(() {
-          user = _updatedUser;
+          user = data;
         });
         //if profile update was successful
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,18 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              // e  .response.toString(),
-              // TODO: display error
-              "ERROR",
-              style: TextStyle(color: Theme.of(context).errorColor),
-            ),
-          ),
-        );
-      }
+      });
     }
   }
 
@@ -102,13 +101,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return Form(
       key: profileForm,
       child: Padding(
-        padding: EdgeInsets.only(bottom: 25.0),
+        padding: const EdgeInsets.only(bottom: 25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
+                    children: const <Widget>[
                       Text(
                         'Personal Information',
                         style: TextStyle(
@@ -135,7 +135,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
+              padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -145,13 +146,14 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Flexible(
                     child: TextFormField(
-                      decoration: InputDecoration(hintText: "Enter First Name"),
+                      decoration:
+                          const InputDecoration(hintText: "Enter First Name"),
                       enabled: !_status,
                       validator: RequiredValidator(errorText: "Required"),
                       controller: _firstNameController,
@@ -159,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Flexible(
                     child: TextFormField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Enter Last Name",
                       ),
                       enabled: !_status,
@@ -171,7 +173,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
+              padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
@@ -184,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
@@ -205,7 +208,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
+              padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
@@ -218,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
@@ -245,27 +249,28 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _labelText(String label) {
     return Text(
       label,
-      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
     );
   }
 
   Widget _getActionButtons() {
     return Padding(
-      padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
+      padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Expanded(
+            flex: 2,
             child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0),
               child: actionButton(context, "Save", _sumitForm),
             ),
-            flex: 2,
           ),
           Expanded(
+            flex: 2,
             child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
+                padding: const EdgeInsets.only(left: 10.0),
                 child: cancelButton(
                   context,
                   "Cancel",
@@ -278,7 +283,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   },
                 )),
-            flex: 2,
           ),
         ],
       ),
@@ -290,7 +294,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: CircleAvatar(
         backgroundColor: Palette.accentColor,
         radius: 14.0,
-        child: Icon(
+        child: const Icon(
           Icons.edit,
           color: Colors.white,
           size: 16.0,

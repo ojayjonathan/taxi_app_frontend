@@ -4,12 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/data/auth_services.dart';
 import 'package:taxi_app/data/exception.dart';
 import 'package:taxi_app/data/models.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/screens/userAccount/profilePage.dart';
 import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class AccountPage extends StatefulWidget {
+  const AccountPage({Key? key}) : super(key: key);
+
   @override
   MapScreenState createState() => MapScreenState();
 }
@@ -25,30 +28,24 @@ class MapScreenState extends State<AccountPage>
   }
 
   void getUser() async {
-    try {
-      User _user = await UserAuthentication.getUserProfile();
-      setState(() {
-        user = _user;
-      });
-    } on Failure catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.message,
-            style: TextStyle(color: Theme.of(context).errorColor),
+    final res = await Client.customer.customerProfile();
+    res.when(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.message,
+              style: TextStyle(color: Theme.of(context).errorColor),
+            ),
           ),
-        ),
-      );
-    }
-  }
-
-  Future<void> _refresh() async {
-    try {
-      User _user = await UserAuthentication.refreshUserProfile();
-      setState(() {
-        user = _user;
-      });
-    } catch (_) {}
+        );
+      },
+      (data) {
+        setState(() {
+          user = data;
+        });
+      },
+    );
   }
 
   int _tabIndex = 0;
@@ -57,117 +54,114 @@ class MapScreenState extends State<AccountPage>
     final double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
-        child: Stack(
-          children: [
-            RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      _profileImage(),
-                      Container(
-                        constraints: BoxConstraints(minHeight: height - 250),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            color: Palette.lighBlueColor,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: const Radius.circular(40),
-                                topRight: Radius.circular(40))),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _tabIndex = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                        padding: const EdgeInsets.only(
-                                          bottom:
-                                              5, // Space between underline and text
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: _tabIndex == 0
-                                                  ? Palette.accentColor
-                                                  : Colors.transparent,
-                                              width: 2.0, // Underline thickness
-                                            ),
+      body: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: () async {},
+            child: ListView(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    _profileImage(),
+                    Container(
+                      constraints: BoxConstraints(minHeight: height - 250),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Palette.lighBlueColor,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40))),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _tabIndex = 0;
+                                    });
+                                  },
+                                  child: Container(
+                                      padding: const EdgeInsets.only(
+                                        bottom:
+                                            5, // Space between underline and text
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: _tabIndex == 0
+                                                ? Palette.accentColor
+                                                : Colors.transparent,
+                                            width: 2.0, // Underline thickness
                                           ),
                                         ),
-                                        child: _labelText("Status")),
-                                  ),
-                                  InkWell(
-                                    child: Container(
-                                        padding: const EdgeInsets.only(
-                                          bottom:
-                                              5, // Space between underline and text
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: _tabIndex == 1
-                                                  ? Palette.accentColor
-                                                  : Colors.transparent,
-                                              width: 2.0,
-                                            ),
+                                      ),
+                                      child: _labelText("Status")),
+                                ),
+                                InkWell(
+                                  child: Container(
+                                      padding: const EdgeInsets.only(
+                                        bottom:
+                                            5, // Space between underline and text
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: _tabIndex == 1
+                                                ? Palette.accentColor
+                                                : Colors.transparent,
+                                            width: 2.0,
                                           ),
                                         ),
-                                        child: _labelText("Profile")),
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          _tabIndex = 1;
-                                        },
-                                      );
-                                    },
-                                  )
-                                ],
-                              ),
+                                      ),
+                                      child: _labelText("Profile")),
+                                  onTap: () {
+                                    setState(
+                                      () {
+                                        _tabIndex = 1;
+                                      },
+                                    );
+                                  },
+                                )
+                              ],
                             ),
-                            Divider(
-                              color: Colors.grey[500],
-                            ),
-                            (_tabIndex == 0)
-                                ? _menu()
-                                : Container(
-                                    child: user == null
-                                        ? const CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation(
-                                                Colors.black87),
-                                          )
-                                        : ProfilePage(
-                                            user: user!,
-                                          ),
-                                  )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                          ),
+                          Divider(
+                            color: Colors.grey[500],
+                          ),
+                          (_tabIndex == 0)
+                              ? _menu()
+                              : Container(
+                                  child: user == null
+                                      ? const CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation(
+                                              Colors.black87),
+                                        )
+                                      : ProfilePage(
+                                          user: user!,
+                                        ),
+                                )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
-            const Positioned(
-              top: 0,
-              right: 0,
-              child: Hero(
-                tag: "page_paint",
-                child: BezierContainer(),
-              ),
+          ),
+          const Positioned(
+            top: 0,
+            right: 0,
+            child: Hero(
+              tag: "page_paint",
+              child: BezierContainer(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
         index: 0,

@@ -91,8 +91,8 @@ class _BookHistoryState extends State<BookHistory> {
               )
             : ListView(
                 children: [
-                  ..._bookings!.map((item) =>
-                      _bookingCard(CustomerTripBooking.fromJson(item))),
+                  ..._bookings!
+                      .map((item) => _bookingCard(TripBooking.fromJson(item))),
                   _bookings!.isEmpty
                       ? const Text("You haven't booked any trip yet")
                       : const SizedBox(
@@ -104,7 +104,7 @@ class _BookHistoryState extends State<BookHistory> {
     );
   }
 
-  Widget _tripDetails(CustomerTripBooking book) {
+  Widget _tripDetails(TripBooking book) {
     return AlertDialog(
       title: const Text('Trip Details'),
       content: Column(
@@ -134,7 +134,7 @@ class _BookHistoryState extends State<BookHistory> {
   TextStyle textStyle = TextStyle(
       color: Palette.dark[2], fontWeight: FontWeight.w500, fontSize: 16);
 
-  Widget _bookingCard(CustomerTripBooking book) {
+  Widget _bookingCard(TripBooking book) {
     String statusKey = book.status;
     final Map statusMap = {"A": "Active", "C": "Canceled", "F": "Fullfiled"};
     Map<String, Color> colors = {

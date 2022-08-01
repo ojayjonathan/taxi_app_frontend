@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/data/auth_services.dart';
 import 'package:taxi_app/data/exception.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
 import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
@@ -47,35 +48,39 @@ class _SignUpPageState extends State<SignUpPage> {
     if (formKey.currentState?.validate() == true && !_submiting && isChecked) {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Submiting please wait...",
-              style: TextStyle(color: Palette.successColor))));
-      try {
-        await UserAuthentication.registerUser(jsonEncode({
-          "email": _email.text,
-          "password": _password.text,
-          "first_name": _firstName.text,
-          "last_name": _lastName.text,
-          "phone_number": "+254${_phoneNumber.text.substring(1)}",
-          "registration_id": _registartionToken
-        }));
-        //if registration was successful
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Registration was sucessfull",
-                style: TextStyle(color: Palette.successColor))));
-        // push the user to login page
-        Navigator.of(context).pushNamed(AppRoutes.login);
-      } on Failure catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Submiting please wait...",
+            style: TextStyle(color: Palette.successColor),
+          ),
+        ),
+      );
+      final res = await Client.customer.register({
+        "email": _email.text,
+        "password": _password.text,
+        "first_name": _firstName.text,
+        "last_name": _lastName.text,
+        "phone_number": "+254${_phoneNumber.text.substring(1)}",
+        "registration_id": _registartionToken
+      });
+      res.when((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.message,
+              error.message,
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
             duration: const Duration(milliseconds: 10000),
           ),
         );
-      }
+      }, (data) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Registration was sucessfull",
+                style: TextStyle(color: Palette.successColor))));
+        // push the user to login page
+        Navigator.of(context).pushNamed(AppRoutes.login);
+      });
     }
     _submiting = false;
     setState(() {});
