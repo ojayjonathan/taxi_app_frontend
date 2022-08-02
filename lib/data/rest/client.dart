@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:taxi_app/data/exception.dart';
-import 'package:taxi_app/data/models.dart';
+import 'package:taxi_app/data/models/exception.dart';
+import 'package:taxi_app/data/models/models.dart';
+import 'package:taxi_app/data/providers/auth.dart';
 
 part 'http_client.dart';
 part 'endpoints.dart';
@@ -17,12 +18,12 @@ class _Customer {
       );
   Result<User> customerProfile() => Http.get(
         ApiEndpoints.customerProfile,
-        deserializer: User.fromJson,
+        deserializer: (json) => User.fromJson(json),
       );
   Result<User> profileUpdate(Map data) => Http.post(
         ApiEndpoints.customerProfile,
         data,
-        deserializer: User.fromJson,
+        deserializer: (json) => User.fromJson(json),
       );
   Result<Map> passwordReset(Map data) => Http.post(
         ApiEndpoints.resetPassword,
@@ -48,21 +49,21 @@ class _Customer {
   Result<TripBooking> book(int tripId, int numSeats) => Http.post(
         ApiEndpoints.customerBooking,
         {"trip_id": tripId, "seats_number": numSeats},
-        deserializer: TripBooking.fromJson,
+        deserializer: (json) => TripBooking.fromJson(json),
       );
   Result<String> cancelBooking(int bookId) => Http.put(
         ApiEndpoints.customerBooking,
         {"book_id": bookId},
         deserializer: (data) => data["message"],
       );
-  Result<Iterable<TripBooking>> allBookingd() => Http.get(
+  Result<Iterable<TripBooking>> allBookings() => Http.get(
         ApiEndpoints.customerBooking,
         deserializer: (data) => data.map(TripBooking.fromJson),
       );
   Result feedback(String message) => Http.post(
         ApiEndpoints.feedBack,
         {"message": message},
-        deserializer: TripBooking.fromJson,
+        deserializer: (json) => TripBooking.fromJson(json),
       );
 }
 

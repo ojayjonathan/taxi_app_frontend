@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:taxi_app/data/auth_services.dart';
-import 'package:taxi_app/data/models.dart';
+import 'package:taxi_app/data/models/models.dart';
 import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/resources/palette.dart';
@@ -44,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
         FocusScope.of(context).requestFocus(FocusNode());
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Updating please wait...",
             style: TextStyle(color: Palette.successColor),
@@ -74,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
         //if profile update was successful
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               "Profile update was sucessfull",
               style: TextStyle(color: Palette.successColor),
@@ -291,10 +289,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _getEditIcon() {
     return GestureDetector(
-      child: CircleAvatar(
+      child: const CircleAvatar(
         backgroundColor: Palette.accentColor,
         radius: 14.0,
-        child: const Icon(
+        child: Icon(
           Icons.edit,
           color: Colors.white,
           size: 16.0,

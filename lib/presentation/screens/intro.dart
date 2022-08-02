@@ -4,17 +4,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:taxi_app/resources/constants.dart';
+import 'package:go_router/go_router.dart';
 
 class OnBoardingPage extends StatefulWidget {
+  const OnBoardingPage({Key? key}) : super(key: key);
+
   @override
-  _OnBoardingPageState createState() => _OnBoardingPageState();
+  State<OnBoardingPage> createState() => _OnBoardingPageState();
 }
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
-  void _onIntroEnd(context) {
-    Navigator.of(context).pushNamed(AppRoutes.welcome);
+  void _onIntroEnd(BuildContext context) {
+    context.pushNamed(AppRoutes.welcome);
   }
 
   Widget _buldSvg(String assetName) {

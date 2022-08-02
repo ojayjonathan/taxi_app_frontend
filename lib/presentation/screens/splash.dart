@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taxi_app/data/providers/auth.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
   @override
-  SplashScreenState createState() => new SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
 class SplashScreenState extends State<SplashScreen> {
@@ -25,16 +30,16 @@ class SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Mat'ndogo".toUpperCase(),
-              style: TextStyle(
+              "MAT'NDOGO",
+              style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                   fontSize: 40),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(Colors.white),
             )
           ],
@@ -44,18 +49,18 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   initializeApp() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String? _authToken = _prefs.getString("authToken");
-    bool _seen = _prefs.getBool("seen") ?? false;
-    if (_seen) {
-      if (_authToken == null) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? authToken = prefs.getString("authToken");
+    bool seen = prefs.getBool("seen") ?? false;
+    if (seen && mounted) {
+      if (authToken == null) {
+        context.goNamed(AppRoutes.welcome);
       } else {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        context.read<AuthProvider>().login(authToken);
       }
     } else {
-      _prefs.setBool('seen', true);
-      Navigator.of(context).pushReplacementNamed(AppRoutes.introduction);
+      prefs.setBool('seen', true);
+      context.goNamed(AppRoutes.introduction);
     }
   }
 }

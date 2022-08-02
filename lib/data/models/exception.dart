@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:taxi_app/resources/constants.dart';
 
 class Failure {
   final String message;
@@ -21,7 +20,7 @@ Failure getException(error) {
           case DioErrorType.cancel:
             return Failure("Api request canceled", 100);
           case DioErrorType.connectTimeout:
-            return Failure("Connection timeout of $timeout ms exceeded", 0);
+            return Failure("Connection timeout of   exceeded", 0);
           case DioErrorType.response:
             switch (error.response!.statusCode) {
               case 400:

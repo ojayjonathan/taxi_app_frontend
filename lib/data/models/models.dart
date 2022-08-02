@@ -1,4 +1,4 @@
-import 'package:taxi_app/data/exception.dart';
+import 'package:taxi_app/data/models/exception.dart';
 
 class User {
   final int userId;
@@ -16,7 +16,7 @@ class User {
     this.profileImage,
     required this.phoneNumber,
   });
-  factory User.fromJson(json) {
+  factory User.fromJson(Map json) {
     return User(
       userId: json["user"]['id'],
       email: json["user"]["email"],
@@ -28,23 +28,33 @@ class User {
   }
 }
 
+class Location {
+  String name;
+  int? id;
+  Location({required this.name, this.id});
+  factory Location.fromJson(Map json) => Location(
+        name: json["name"],
+        id: json["id"],
+      );
+}
+
 class TravelRoute {
-  final String origin;
-  final String destination;
+  final Location origin;
+  final Location destination;
   final int cost;
   final bool available;
-  TravelRoute(
-    this.origin,
-    this.destination,
-    this.cost,
-    this.available,
-  );
+  TravelRoute({
+    required this.origin,
+    required this.destination,
+    required this.cost,
+    required this.available,
+  });
   factory TravelRoute.fromJson(Map<String, dynamic> json) {
     return TravelRoute(
-      json["origin"]["name"],
-      json["destination"]["name"],
-      json["cost"],
-      json["available"],
+      origin: Location.fromJson(json["origin"]),
+      destination: Location.fromJson(json["destination"]),
+      cost: json["cost"],
+      available: json["available"],
     );
   }
 }
@@ -52,7 +62,7 @@ class TravelRoute {
 class TripModel {
   final TravelRoute route;
   final String arrival;
-  final String departure;
+  final String? departure;
   final String status;
   final int availableSeats;
   final int id;
@@ -96,7 +106,7 @@ class TripBooking {
     this.cost,
     this.status,
   );
-  factory TripBooking.fromJson(json) {
+  factory TripBooking.fromJson(Map json) {
     return TripBooking(
       json["id"],
       TripModel.fromJson(json["trip"]),

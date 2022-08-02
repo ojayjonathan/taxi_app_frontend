@@ -3,20 +3,22 @@ import 'package:taxi_app/resources/palette.dart';
 
 // ignore: must_be_immutable
 class Terms extends StatelessWidget {
+  const Terms({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Title(
-          child: Text(
+          color: Colors.white,
+          child: const Text(
             "Terms and conditions",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          color: Colors.white,
         ),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
@@ -24,7 +26,7 @@ class Terms extends StatelessWidget {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         child: ListView(children: getTerms()),
       ),
     );
@@ -68,7 +70,7 @@ class Terms extends StatelessWidget {
           ),
           ...terms[key]!.map(
             (e) => Padding(
-              padding: EdgeInsets.only(left: 30, top: 10),
+              padding: const EdgeInsets.only(left: 30, top: 10),
               child: Text(
                 e,
                 textAlign: TextAlign.left,

@@ -24,7 +24,7 @@ Widget submitButton(
               blurRadius: 5,
               spreadRadius: 2)
         ],
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
@@ -77,8 +77,8 @@ Widget actionButton(
     child: Container(
       padding: EdgeInsets.symmetric(vertical: padding),
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
           color: Palette.accentColor),
       child: Text(
         label,

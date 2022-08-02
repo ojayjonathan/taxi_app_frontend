@@ -1,8 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/exception.dart';
-import 'package:taxi_app/data/models.dart';
-import 'package:taxi_app/data/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_app/data/models/models.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/paints/curvePaint.dart';
 import 'package:taxi_app/resources/constants.dart';
@@ -12,63 +12,59 @@ class Booking extends StatefulWidget {
   const Booking({Key? key}) : super(key: key);
 
   @override
-  _BookingState createState() => _BookingState();
+  State<Booking> createState() => _BookingState();
 }
 
 class _BookingState extends State<Booking> {
-  List<dynamic>? operationRoutes;
+  List<TravelRoute>? operationRoutes;
   //for filtering in search
-  List<dynamic>? operationRoutesAll;
+  List<TravelRoute>? operationRoutesAll;
   @override
   void initState() {
-    fetchData();
     super.initState();
+    fetchData();
   }
 
   void fetchData() async {
-    try {
-      List _operationRoutes = await BookingServices.getroutes();
-      setState(
-        () {
-          operationRoutes = _operationRoutes;
-          operationRoutesAll = _operationRoutes;
-        },
-      );
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    } on Failure catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    final res = await Client.customer.routes();
+    res.when(
+      (error) => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            e.toString(),
+            error.message,
             style: TextStyle(color: Theme.of(context).errorColor),
           ),
-          duration: Duration(seconds: 10000),
+          duration: const Duration(seconds: 10000),
           action: SnackBarAction(label: "retry", onPressed: fetchData),
         ),
-      );
-    }
+      ),
+      (data) {
+        setState(
+          () {
+            operationRoutes = data.toList();
+            operationRoutesAll = data.toList();
+          },
+        );
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      },
+    );
   }
 
   Future<void> refreshData() async {
-    try {
-      List response = await BookingServices.refreshroutes();
-      operationRoutes = response;
-      operationRoutesAll = response;
-      setState(() {});
-    } catch (_) {}
+    fetchData();
   }
 
   void filterData(String text) {
     text = text.toLowerCase();
-    Iterable<dynamic> _routesFiltered = operationRoutesAll!.where(
+    Iterable<TravelRoute> routesFiltered = operationRoutesAll!.where(
       (item) {
-        return (item["origin"]["name"].toLowerCase().contains(text) ||
-            item["destination"]["name"].toLowerCase().contains(text));
+        return (item.origin.name.toLowerCase().contains(text) ||
+            item.destination.name.toLowerCase().contains(text));
       },
     );
     setState(
       () {
-        operationRoutes = _routesFiltered.toList();
+        operationRoutes = routesFiltered.toList();
       },
     );
   }
@@ -76,42 +72,41 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    Widget _card(TravelRoute _route) {
-      String _label = _route.available == true ? "Book Now" : "Coming Soon";
+    Widget _card(TravelRoute route) {
+      String label = route.available == true ? "Book Now" : "Coming Soon";
       return Card(
         elevation: 3,
         shadowColor: Colors.grey[200],
         child: Container(
-          padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
           alignment: Alignment.bottomCenter,
-          margin: EdgeInsets.only(top: 5),
+          margin: const EdgeInsets.only(top: 5),
+          decoration: BoxDecoration(
+            color: Palette.backgroundColor,
+            borderRadius: BorderRadius.circular(5.0),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("${_route.origin} - ${_route.destination}",
+              Text("${route.origin} - ${route.destination}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Palette.dark[2],
                       fontSize: 14)),
               Text(
-                "Ksh ${_route.cost}",
+                "Ksh ${route.cost}",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Palette.dark[2],
                     fontSize: 15),
               ),
-              actionButton(context, _label, () {
-                Navigator.pushNamed(
-                  context,
+              actionButton(context, label, () {
+                context.pushNamed(
                   AppRoutes.makeBooking,
-                  arguments: {"from": _route.origin, "to": _route.destination},
+                  extra: {"from": route.origin, "to": route.destination},
                 );
               }, padding: 5)
             ],
-          ),
-          decoration: BoxDecoration(
-            color: Palette.backgroundColor,
-            borderRadius: BorderRadius.circular(5.0),
           ),
         ),
       );
@@ -132,71 +127,70 @@ class _BookingState extends State<Booking> {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.of(context).pushNamed(AppRoutes.account);
+            context.pushNamed(AppRoutes.account);
           } else if (index == 2) {
-            Navigator.of(context).pushNamed(AppRoutes.support);
+            context.pushNamed(AppRoutes.support);
           } else {
-            Navigator.of(context).pushNamed(AppRoutes.home);
+            context.pushNamed(AppRoutes.home);
           }
         });
     return Scaffold(
       bottomNavigationBar: curvedNavigationBar,
-      body: Container(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Positioned(
-                  child: CurvePaint(),
-                  top: 0,
-                  left: 0,
-                ),
-                Column(
-                  children: <Widget>[
-                    SizedBox(height: height * 0.1),
-                    _searchField(),
-                    SizedBox(height: height * 0.08),
-                  ],
-                )
-              ],
-            ),
-            operationRoutes != null
-                ? Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: refreshData,
-                      child: GridView.count(
-                        padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        shrinkWrap: true,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        childAspectRatio: 1.2,
-                        children: [
-                          // ignore: sdk_version_ui_as_code
-                          ...operationRoutes!
-                              .map((item) => _card(TravelRoute.fromJson(item))),
-                          operationRoutes!.isEmpty
-                              ? Center(child: Text("Nothing was found"))
-                              : SizedBox(
-                                  height: 0,
-                                )
-                        ],
-                      ),
+      body: Column(
+        children: [
+          Stack(
+            children: [
+              const Positioned(
+                top: 0,
+                left: 0,
+                child: CurvePaint(),
+              ),
+              Column(
+                children: <Widget>[
+                  SizedBox(height: height * 0.1),
+                  _searchField(),
+                  SizedBox(height: height * 0.08),
+                ],
+              )
+            ],
+          ),
+          operationRoutes != null
+              ? Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: refreshData,
+                    child: GridView.count(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      shrinkWrap: true,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      childAspectRatio: 1.2,
+                      children: [
+                        // ignore: sdk_version_ui_as_code
+                        ...operationRoutes!.map(
+                          (item) => _card(item),
+                        ),
+                        operationRoutes!.isEmpty
+                            ? const Center(child: Text("Nothing was found"))
+                            : const SizedBox(
+                                height: 0,
+                              )
+                      ],
                     ),
-                  )
-                : CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.black87),
-                  )
-          ],
-        ),
+                  ),
+                )
+              : const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.black87),
+                )
+        ],
       ),
     );
   }
 
   Container _searchField() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -211,9 +205,9 @@ class _BookingState extends State<Booking> {
               child: TextField(
                 onChanged: filterData,
                 textAlign: TextAlign.center,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: InputBorder.none,
-                    fillColor: Color(0xffffff),
+                    fillColor: Color(0x00ffffff),
                     hintText: "Search",
                     contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
               ),
@@ -221,7 +215,7 @@ class _BookingState extends State<Booking> {
           ),
           IconButton(
               onPressed: () {},
-              icon: Icon(
+              icon: const Icon(
                 Icons.search,
                 color: Palette.accentColor,
                 size: 40,

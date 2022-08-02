@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
-import 'package:taxi_app/presentation/widgets/paints/welcomePagePaint.dart';
+import 'package:taxi_app/presentation/widgets/paints/welcome_page_paint.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 
@@ -13,13 +14,13 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   Widget _signUpButton() {
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(AppRoutes.signup),
+      onTap: () => context.goNamed(AppRoutes.signup),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 13),
+        padding: const EdgeInsets.symmetric(vertical: 13),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(999),
           ),
           border: Border.all(color: Palette.primary3Color, width: 2),
@@ -39,7 +40,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "let's ride",
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
@@ -60,26 +61,26 @@ class _WelcomePageState extends State<WelcomePage> {
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: height,
           child: Column(
             children: <Widget>[
               Stack(
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     height: height * 0.6,
-                    child: WelcomePagePaint(),
+                    child: const WelcomePagePaint(),
                   ),
-                  Container(
+                  SizedBox(
                     height: height * 0.6,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          child: _title(),
                           width: width * 0.75,
-                          padding: EdgeInsets.only(top: 50),
+                          padding: const EdgeInsets.only(top: 50),
+                          child: _title(),
                         ),
                         Align(
                           alignment: Alignment.bottomCenter,
@@ -93,26 +94,26 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: submitButton(
                     context,
-                    () => Navigator.of(context).pushNamed(AppRoutes.login),
+                    () => context.goNamed(AppRoutes.login),
                     "Login",
                     fontSize: 18,
                     borderRadius: 999),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50),
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: _signUpButton(),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],

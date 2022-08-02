@@ -1,14 +1,15 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taxi_app/data/auth_services.dart';
-import 'package:taxi_app/data/exception.dart';
-import 'package:taxi_app/data/models.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_app/data/models/models.dart';
+import 'package:taxi_app/data/providers/auth.dart';
 import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/screens/userAccount/profilePage.dart';
-import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
+import 'package:taxi_app/presentation/widgets/paints/bezier_container.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -66,9 +67,9 @@ class MapScreenState extends State<AccountPage>
                     Container(
                       constraints: BoxConstraints(minHeight: height - 250),
                       width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           color: Palette.lighBlueColor,
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(40),
                               topRight: Radius.circular(40))),
                       child: Column(
@@ -178,9 +179,9 @@ class MapScreenState extends State<AccountPage>
         ],
         onTap: (index) {
           if (index == 2) {
-            Navigator.of(context).pushNamed(AppRoutes.support);
+            context.pushNamed(AppRoutes.support);
           } else if (index == 1) {
-            Navigator.of(context).pushNamed(AppRoutes.home);
+            context.pushNamed(AppRoutes.home);
           }
         },
       ),
@@ -205,7 +206,7 @@ class MapScreenState extends State<AccountPage>
                       width: 100.0,
                       height: 100.0,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Palette.primary3Color
                           //TODO:replace name initials with profile image
 
@@ -259,27 +260,29 @@ class MapScreenState extends State<AccountPage>
   }
 
   Widget _menu() {
-    Future<void> logout() async {
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
-      _prefs.remove("authToken");
-      _prefs.remove("user");
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(AppRoutes.welcome, (route) => false);
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        _menuItem("My Bookings", Icons.bookmark,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AppRoutes.bookHistory)),
-        _menuItem("Help", Icons.call,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AppRoutes.support)),
-        _menuItem("Feedback", Icons.message,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AppRoutes.feedback)),
-        _menuItem("Logout", Icons.exit_to_app, onPressed: logout)
+        _menuItem(
+          "My Bookings",
+          Icons.bookmark,
+          onPressed: () => context.pushNamed(AppRoutes.bookHistory),
+        ),
+        _menuItem(
+          "Help",
+          Icons.call,
+          onPressed: () => context.pushNamed(AppRoutes.support),
+        ),
+        _menuItem(
+          "Feedback",
+          Icons.message,
+          onPressed: () => context.pushNamed(AppRoutes.feedback),
+        ),
+        _menuItem(
+          "Logout",
+          Icons.exit_to_app,
+          onPressed: () => context.read<AuthProvider>().logout(),
+        )
       ],
     );
   }

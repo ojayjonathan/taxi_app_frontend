@@ -1,21 +1,19 @@
-import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/auth_services.dart';
-import 'package:taxi_app/data/exception.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
-import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
+import 'package:taxi_app/presentation/widgets/paints/bezier_container.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({Key? key, String? title}) : super(key: key);
+  const SignUpPage({Key? key, String? title}) : super(key: key);
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  State<SignUpPage>  createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -49,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Submiting please wait...",
             style: TextStyle(color: Palette.successColor),
@@ -75,11 +73,11 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       }, (data) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Registration was sucessfull",
                 style: TextStyle(color: Palette.successColor))));
         // push the user to login page
-        Navigator.of(context).pushNamed(AppRoutes.login);
+        context.goNamed(AppRoutes.login);
       });
     }
     _submiting = false;
@@ -99,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _title() {
     return RichText(
       textAlign: TextAlign.center,
-      text: TextSpan(children: [
+      text: const TextSpan(children: [
         TextSpan(
           text: 'mat',
           style: TextStyle(color: Palette.headerColor, fontSize: 30),
@@ -127,8 +125,8 @@ class _SignUpPageState extends State<SignUpPage> {
             width: 10,
           ),
           InkWell(
-            onTap: () => Navigator.of(context).popAndPushNamed(AppRoutes.login),
-            child: Text(
+            onTap: () => context.goNamed(AppRoutes.login),
+            child: const Text(
               'Login',
               style: TextStyle(
                   color: Palette.primary3Color,

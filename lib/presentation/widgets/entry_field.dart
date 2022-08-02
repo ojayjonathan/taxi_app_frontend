@@ -67,9 +67,9 @@ Widget phoneEntryField(
         TextFormField(
           decoration: const InputDecoration(
             border: InputBorder.none,
-            fillColor: const Color(0xfff3f3f4),
+            fillColor: Color(0xfff3f3f4),
             filled: true,
-            prefixIcon: const Icon(Icons.phone),
+            prefixIcon: Icon(Icons.phone),
             hintText: "0734434334",
           ),
           validator: validator,

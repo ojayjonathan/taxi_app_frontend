@@ -31,7 +31,7 @@ class WelcomePagePaint extends StatelessWidget {
       child: Container(
         height: MediaQuery.of(context).size.height * .25,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

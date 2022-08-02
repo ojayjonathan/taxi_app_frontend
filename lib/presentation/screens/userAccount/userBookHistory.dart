@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/exception.dart';
-import 'package:taxi_app/data/models.dart';
-import 'package:taxi_app/data/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_app/data/models/models.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class BookHistory extends StatefulWidget {
+  const BookHistory({Key? key}) : super(key: key);
+
   @override
-  _BookHistoryState createState() => _BookHistoryState();
+  State<BookHistory> createState() => _BookHistoryState();
 }
 
 class _BookHistoryState extends State<BookHistory> {
-  List<dynamic>? _bookings;
+  List<TripBooking>? _bookings;
   Map<String, Color>? scaffoldData;
   @override
   void initState() {
@@ -33,32 +35,36 @@ class _BookHistoryState extends State<BookHistory> {
   }
 
   void fetchData() async {
-    try {
-      List apiData = await BookingServices.getBookingHistory();
-      setState(() {
-        _bookings = apiData;
-      });
-    } on Failure catch (e) {
-      _showSnackBar(e.message, Theme.of(context).errorColor,
-          action: SnackBarAction(
-              label: "retry",
-              onPressed: () async {
-                fetchData();
-              }));
-    }
+    final res = await Client.customer.allBookings();
+    res.when(
+      (error) => _showSnackBar(
+        error.message,
+        Theme.of(context).errorColor,
+        action: SnackBarAction(
+          label: "retry",
+          onPressed: () async {
+            fetchData();
+          },
+        ),
+      ),
+      (data) => setState(
+        () {
+          _bookings = data.toList();
+        },
+      ),
+    );
   }
 
   void _cancelBooking(int bookId) async {
-    try {
-      _showSnackBar("Submiting please wait...", Palette.successColor);
-      await BookingServices.cancelBooking(bookId: bookId);
-      _showSnackBar(
+    _showSnackBar("Submiting please wait...", Palette.successColor);
+    final res = await Client.customer.cancelBooking(bookId);
+    res.when(
+      (error) => _showSnackBar(error.message, Theme.of(context).errorColor),
+      (data) => _showSnackBar(
         "Book has been canceled",
         Palette.successColor,
-      );
-    } on Failure catch (e) {
-      _showSnackBar(e.message, Theme.of(context).errorColor);
-    }
+      ),
+    );
   }
 
   @override
@@ -73,14 +79,7 @@ class _BookHistoryState extends State<BookHistory> {
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
-        // backgroundColor: Color(0xfffafafa),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+ 
       ),
       body: Container(
         padding: const EdgeInsets.all(15),
@@ -91,8 +90,9 @@ class _BookHistoryState extends State<BookHistory> {
               )
             : ListView(
                 children: [
-                  ..._bookings!
-                      .map((item) => _bookingCard(TripBooking.fromJson(item))),
+                  ..._bookings!.map(
+                    (item) => _bookingCard(item),
+                  ),
                   _bookings!.isEmpty
                       ? const Text("You haven't booked any trip yet")
                       : const SizedBox(
@@ -125,7 +125,8 @@ class _BookHistoryState extends State<BookHistory> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CLOSE', style: TextStyle(color: Palette.accentColor)),
+          child:
+              const Text('CLOSE', style: TextStyle(color: Palette.accentColor)),
         ),
       ],
     );
@@ -186,8 +187,8 @@ class _BookHistoryState extends State<BookHistory> {
                     child: const Text("Cancel"))
                 : TextButton(
                     child: const Text("Feedback"),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed(AppRoutes.feedback))
+                    onPressed: () => context.pushNamed(AppRoutes.feedback),
+                  )
           ],
         ),
       ),

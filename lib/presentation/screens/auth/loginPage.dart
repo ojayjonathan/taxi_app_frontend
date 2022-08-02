@@ -1,12 +1,17 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taxi_app/data/providers/auth.dart';
 import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
-import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
+import 'package:taxi_app/presentation/widgets/paints/bezier_container.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
+
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -44,12 +49,12 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).clearSnackBars();
       _submiting = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Submiting please wait...',
             style: TextStyle(color: Palette.successColor),
           ),
-          duration: const Duration(milliseconds: 10000),
+          duration: Duration(milliseconds: 10000),
         ),
       );
       final res = await Client.customer.login({
@@ -69,14 +74,17 @@ class _LoginPageState extends State<LoginPage> {
         );
       }, (data) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               "Login was sucessfull",
               style: TextStyle(color: Palette.successColor),
             ),
           ),
         );
-        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        SharedPreferences.getInstance().then(
+          (value) => value.setString(AUTH_TOKEN_KEY, data),
+        );
+        context.read<AuthProvider>().login(data);
       });
     }
   }
@@ -92,9 +100,8 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(width: 10),
           InkWell(
-            onTap: () =>
-                Navigator.of(context).popAndPushNamed(AppRoutes.signup),
-            child: Text('Register',
+            onTap: () => context.goNamed(AppRoutes.signup),
+            child: const Text('Register',
                 style: TextStyle(
                     color: Palette.primary3Color,
                     fontSize: 13,
@@ -108,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _title() {
     return RichText(
       textAlign: TextAlign.center,
-      text: TextSpan(children: [
+      text: const TextSpan(children: [
         TextSpan(
           text: 'Mat',
           style: TextStyle(color: Palette.textColor, fontSize: 30),
@@ -159,8 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.only(top: 8),
                         alignment: Alignment.centerRight,
                         child: InkWell(
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(AppRoutes.resetPassword),
+                          onTap: () =>
+                              context.pushNamed(AppRoutes.resetPassword),
                           child: const Text('Forgot Password ?',
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500)),

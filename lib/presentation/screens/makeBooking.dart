@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/exception.dart';
-import 'package:taxi_app/data/models.dart';
-import 'package:taxi_app/data/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_app/data/models/models.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
@@ -10,11 +10,11 @@ class BookConfirm extends StatefulWidget {
   final Map<String, dynamic> selectedRoute;
   const BookConfirm({Key? key, required this.selectedRoute}) : super(key: key);
   @override
-  _BookConfirmState createState() => _BookConfirmState();
+  State<BookConfirm> createState() => _BookConfirmState();
 }
 
 class _BookConfirmState extends State<BookConfirm> {
-  List<dynamic>? _availableTrip;
+  List<TripModel>? _availableTrip;
   final TextEditingController _numSeatsController = TextEditingController();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   TripModel? _selectedTrip;
@@ -41,32 +41,26 @@ class _BookConfirmState extends State<BookConfirm> {
   }
 
   void _init() async {
-    try {
-      List _apiData = await BookingServices.getTrips(q: widget.selectedRoute);
-      setState(() {
-        _availableTrip = _apiData;
-      });
-    } on Failure catch (e) {
-      _showSnackBar(e.message, Theme.of(context).errorColor,
-          action: SnackBarAction(label: "retry", onPressed: _init));
-    }
+    final res = await Client.customer.trips({...widget.selectedRoute});
+    res.when(
+      (error) => _showSnackBar(error.message, Theme.of(context).errorColor,
+          action: SnackBarAction(label: "retry", onPressed: _init)),
+      (data) => setState(
+        () {
+          _availableTrip = data.toList();
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
         title: const Text(
           "Booking",
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w500, fontSize: 28),
         ),
       ),
@@ -76,8 +70,9 @@ class _BookConfirmState extends State<BookConfirm> {
         child: _availableTrip != null
             ? Column(
                 children: <Widget>[
-                  ..._availableTrip!
-                      .map((trip) => _tripCard(TripModel.fromJson(trip))),
+                  ..._availableTrip!.map(
+                    (trip) => _tripCard(trip),
+                  ),
                   _availableTrip!.isEmpty
                       ? const Text("No trip scheduled for this route")
                       : const SizedBox(
@@ -96,7 +91,7 @@ class _BookConfirmState extends State<BookConfirm> {
   }
 
   Widget _tripCard(TripModel trip) {
-    String departure = trip.departure;
+    String? departure = trip.departure;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 3,
@@ -153,34 +148,42 @@ class _BookConfirmState extends State<BookConfirm> {
     void _makeBooking() async {
       if (_form.currentState!.validate()) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               "Submiting please wait...",
               style: TextStyle(color: Palette.successColor),
             ),
           ),
         );
-        try {
-          await BookingServices.makebooking(
-              _selectedTrip!.id, int.parse(_numSeatsController.text));
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Your booking has been confirmed",
-                  style: TextStyle(color: Palette.successColor))));
-          Navigator.of(context).popAndPushNamed(AppRoutes.bookHistory);
-        } on Failure catch (e) {
+        final res = await Client.customer.book(
+          _selectedTrip!.id,
+          int.parse(_numSeatsController.text),
+        );
+        res.when((error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                e.toString(),
+                error.toString(),
                 style: TextStyle(color: Theme.of(context).errorColor),
               ),
             ),
           );
-        }
+        }, (data) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Your booking has been confirmed",
+                style: TextStyle(color: Palette.successColor),
+              ),
+            ),
+          );
+
+          context.pushNamed(AppRoutes.bookHistory);
+        });
       }
     }
 
-    return Container(
+    return SizedBox(
       height: 300,
       child: AlertDialog(
         title: const Text('Confirm booking'),
@@ -203,15 +206,15 @@ class _BookConfirmState extends State<BookConfirm> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'CANCEL',
               style: TextStyle(color: Palette.accentColor),
             ),
           ),
           TextButton(
             onPressed: _makeBooking,
-            child:
-                Text('CONFIRM', style: TextStyle(color: Palette.accentColor)),
+            child: const Text('CONFIRM',
+                style: TextStyle(color: Palette.accentColor)),
           ),
         ],
       ),

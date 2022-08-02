@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/services.dart';
+import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/resources/palette.dart';
 
 class UserFeedBack extends StatefulWidget {
   const UserFeedBack({Key? key}) : super(key: key);
 
   @override
-  _UserFeedBackState createState() => _UserFeedBackState();
+  State<UserFeedBack> createState() => _UserFeedBackState();
 }
 
 class _UserFeedBackState extends State<UserFeedBack> {
-  TextEditingController _message = TextEditingController();
+  final TextEditingController _message = TextEditingController();
   void _sendFeedback() async {
-    if (_message.text != null) {
-      try {
-        await feedback(_message.text);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Thank you for the feedback",
-              style: TextStyle(color: Palette.successColor),
-            ),
-          ),
-        );
-        Navigator.of(context).pop();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
+    if (_message.text.isNotEmpty) {
+      final res = await Client.customer.feedback(_message.text);
+      res.when(
+        (error) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               "An  error occured",
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
           ),
-        );
-      }
+        ),
+        (data) => ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Thank you for the feedback",
+              style: TextStyle(color: Palette.successColor),
+            ),
+          ),
+        ),
+      );
     }
   }
 
@@ -42,31 +40,31 @@ class _UserFeedBackState extends State<UserFeedBack> {
     return Scaffold(
       appBar: AppBar(
         title: Title(
-          child: Text("Feedback"),
           color: Palette.dark[2],
+          child: const Text("Feedback"),
         ),
-        backgroundColor: Color(0xfffafafa),
+        backgroundColor: const Color(0xfffafafa),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () => Navigator.of(context).pop()),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
               onPressed: _sendFeedback,
-              child: Text(
+              style: ElevatedButton.styleFrom(primary: Palette.accentColor),
+              child: const Text(
                 "submit",
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
-              style: ElevatedButton.styleFrom(primary: Palette.accentColor),
             ),
           )
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         child: ListView(
           children: [
             Form(
@@ -74,7 +72,7 @@ class _UserFeedBackState extends State<UserFeedBack> {
                 maxLines: 8,
                 controller: _message,
                 minLines: 6,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     fillColor: Color(0xfff3f3f4),
                     filled: true,

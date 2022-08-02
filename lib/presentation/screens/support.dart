@@ -1,26 +1,29 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_app/presentation/widgets/paints/bezier_container.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ContactUs extends StatelessWidget {
+  const ContactUs({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Future<void> _call(String url) async {
-      if (await canLaunch(url)) {
-        await launch(url);
+      if (await canLaunchUrlString(url)) {
+        await launchUrlString(url);
       } else {}
     }
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
-            Positioned(
+            const Positioned(
               top: 0,
               right: 0,
               child: Hero(
@@ -34,7 +37,7 @@ class ContactUs extends StatelessWidget {
               children: [
                 SvgPicture.asset("assets/graphics/contact.svg", width: 300),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     "Contact Us",
                     style: TextStyle(
@@ -46,16 +49,16 @@ class ContactUs extends StatelessWidget {
                 InkWell(
                   onTap: () => _call("tel:0716539104"),
                   child: Card(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     elevation: 2,
                     shadowColor: Colors.grey[250],
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
+                        children: const [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Icon(
                               Icons.phone,
                               size: 20,
@@ -68,9 +71,9 @@ class ContactUs extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Card(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   elevation: 2,
                   shadowColor: Colors.grey[250],
                   child: Padding(
@@ -78,8 +81,8 @@ class ContactUs extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Icon(
                             Icons.email,
                             size: 20,
@@ -88,7 +91,7 @@ class ContactUs extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () => _call("mailto:matndogo254@gmail.com"),
-                          child: Text("matndogo254@gmail.com"),
+                          child: const Text("matndogo254@gmail.com"),
                         )
                       ],
                     ),
@@ -114,9 +117,9 @@ class ContactUs extends StatelessWidget {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.of(context).pushNamed(AppRoutes.account);
+            context.pushNamed(AppRoutes.account);
           } else if (index == 1) {
-            Navigator.of(context).pushNamed(AppRoutes.home);
+            context.pushNamed(AppRoutes.home);
           }
         },
       ),

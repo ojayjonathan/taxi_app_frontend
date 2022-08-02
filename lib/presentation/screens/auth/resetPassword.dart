@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/data/auth_services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_app/data/rest/client.dart';
 import 'package:taxi_app/presentation/widgets/buttons.dart';
 import 'package:taxi_app/presentation/widgets/entry_field.dart';
-import 'package:taxi_app/presentation/widgets/paints/bezierContainer.dart';
+import 'package:taxi_app/presentation/widgets/paints/bezier_container.dart';
 import 'package:taxi_app/resources/constants.dart';
 import 'package:taxi_app/resources/palette.dart';
 import 'package:taxi_app/resources/utils/validators.dart';
@@ -41,7 +41,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       }, (data) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(data["message"],
-                style: TextStyle(color: Palette.successColor))));
+                style: const TextStyle(color: Palette.successColor))));
         setState(() {
           uid = data["uid"];
         });
@@ -70,14 +70,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         );
       }, (_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               "Password  changed successfuly",
               style: TextStyle(color: Palette.successColor),
             ),
           ),
         );
-        Navigator.of(context).pushNamed(AppRoutes.login);
+        context.go(AppRoutes.login);
       });
     }
   }
@@ -93,7 +93,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget _title() {
     return RichText(
       textAlign: TextAlign.center,
-      text: TextSpan(
+      text: const TextSpan(
         children: [
           TextSpan(
             text: 'mat',
@@ -111,44 +111,42 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  _title(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Form(
-                    key: formKey,
-                    child: entryField("Email",
-                        hintText: "johndoe@gmail.com",
-                        icon: Icons.email,
-                        validator: emailValidator,
-                        controller: _emailController),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  submitButton(context, resetPassword, "Reset Password"),
-                ],
-              ),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(
+                  height: 50,
+                ),
+                _title(),
+                const SizedBox(
+                  height: 20,
+                ),
+                Form(
+                  key: formKey,
+                  child: entryField("Email",
+                      hintText: "johndoe@gmail.com",
+                      icon: Icons.email,
+                      validator: emailValidator,
+                      controller: _emailController),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                submitButton(context, resetPassword, "Reset Password"),
+              ],
             ),
-            Positioned(top: 40, left: 0, child: backButton(context)),
-            const Positioned(
-                top: 0,
-                right: 0,
-                child: Hero(
-                    tag: "page_paint", child: BezierContainer())),
-          ],
-        ),
+          ),
+          Positioned(top: 40, left: 0, child: backButton(context)),
+          const Positioned(
+              top: 0,
+              right: 0,
+              child: Hero(
+                  tag: "page_paint", child: BezierContainer())),
+        ],
       ),
     );
   }
@@ -194,11 +192,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('CANCEL', style: TextStyle(color: Palette.accentColor)),
+          child: const Text('CANCEL', style: TextStyle(color: Palette.accentColor)),
         ),
         TextButton(
           onPressed: setNewPassword,
-          child: Text('CONFIRM', style: TextStyle(color: Palette.accentColor)),
+          child: const Text('CONFIRM', style: TextStyle(color: Palette.accentColor)),
         ),
       ],
     );
