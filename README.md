@@ -1,16 +1,19 @@
-# matndogo
+# Mat'ndogo - Client Project
 
-A new Flutter project.
+## Introduction
 
-## Getting Started
+Mat'ndogo is a client project aimed at improving the taxi booking experience. With Mat'ndogo, commuters can book a taxi ticket with just a few taps on their mobile devices, making it easier and more convenient for them to get around.
 
-This project is a starting point for a Flutter application.
+## Project Components
 
-A few resources to get you started if this is your first Flutter project:
+Mat'ndogo consists of a web server and a mobile application. The web server provides a platform for the application to communicate with, while the mobile application is the user interface that makes the experience intuitive and user-friendly.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Technologies
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Server: Python (Django)
+- Mobile app: Flutter
+
+## Resources
+
+- Design files: [Figma](https://www.figma.com/file/BAwuSVyWuZtHH8g2mK4ydW/car-booking?node-id=0%3A1)
+- Download on the Playstore: [Playstore](https://play.google.com/store/apps/details?id=com.matndogo.taxi_app)
